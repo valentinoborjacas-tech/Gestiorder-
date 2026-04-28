@@ -62,40 +62,47 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 <script>
 // ── CORREOS AUTORIZADOS ───────────────────────────────────
-// Agrega aquí los correos Gmail que pueden acceder al sistema
-const CORREOS_AUTORIZADOS = [
+const ADMINS = [
   'valentinoborjacas@gmail.com',  // Reemplaza con tu correo real
-  // Agrega más correos aquí:
-  // 'empleado1@gmail.com',
-  // 'empleado2@gmail.com',
+  // Agrega más admins aquí:
+  // 'admin2@gmail.com',
+];
+
+const OPERARIOS = [
+  // Agrega correos de operarios aquí:
+  // 'operario1@gmail.com',
+  // 'operario2@gmail.com',
 ];
 
 function handleCredentialResponse(response) {
   document.getElementById('checkingMsg').style.display = 'block';
   document.getElementById('errorMsg').style.display = 'none';
 
-  // Decodificar JWT token
   const payload = JSON.parse(atob(response.credential.split('.')[1]));
-  const email = payload.email;
+  const email = payload.email.toLowerCase();
   const name  = payload.name;
 
-  if (CORREOS_AUTORIZADOS.includes(email.toLowerCase())) {
-    // Guardar sesión
-    sessionStorage.setItem('go_user', JSON.stringify({ email, name, token: response.credential }));
-    // Redirigir al sistema
+  const isAdmin    = ADMINS.map(e => e.toLowerCase()).includes(email);
+  const isOperario = OPERARIOS.map(e => e.toLowerCase()).includes(email);
+
+  if (isAdmin) {
+    sessionStorage.setItem('go_user', JSON.stringify({ email, name, rol: 'admin', token: response.credential }));
     window.location.href = 'index.html';
+  } else if (isOperario) {
+    sessionStorage.setItem('go_user', JSON.stringify({ email, name, rol: 'operario', token: response.credential }));
+    window.location.href = 'operario.html';
   } else {
     document.getElementById('checkingMsg').style.display = 'none';
     document.getElementById('errorMsg').style.display = 'block';
-    // Limpiar sesión
     sessionStorage.removeItem('go_user');
   }
 }
 
-// Si ya hay sesión activa, redirigir directo
+// Si ya hay sesión activa, redirigir según rol
 const session = sessionStorage.getItem('go_user');
 if (session) {
-  window.location.href = 'index.html';
+  const user = JSON.parse(session);
+  window.location.href = user.rol === 'operario' ? 'operario.html' : 'index.html';
 }
 </script>
 </body>
