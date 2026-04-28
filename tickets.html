@@ -196,6 +196,10 @@ input::placeholder { color: var(--text3); }
       <input type="text" id="tk_codigo" placeholder="Ej: SA-ROJ-140-33">
     </div>
     <div class="form-group">
+      <label>Cantidad requerida *</label>
+      <input type="number" id="tk_cantidad" placeholder="Ej: 500" min="1">
+    </div>
+    <div class="form-group">
       <label>N° Orden vinculada *</label>
       <select id="tk_orden">
         <option value="">Seleccionar orden...</option>
@@ -240,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function cargarDatos() {
   showToast('Cargando...', 'loading');
   try {
-    const urlTk  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=TICKETS_FAB&range=A4:G500`;
+    const urlTk  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=TICKETS_FAB&range=A4:H500`;
     const urlOrd = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDENES&range=A3:C500`;
 
     const [rTk, rOrd] = await Promise.all([
@@ -256,6 +260,7 @@ async function cargarDatos() {
       operario:  r[4]?.trim(),
       fechaLim:  r[5]?.trim(),
       estado:    r[6]?.trim() || 'PENDIENTE',
+      cantidad:  r[7]?.trim() || '',
     }));
 
     ordenes = parseGviz(rOrd).filter(r => r[0]).map(r => ({
@@ -356,6 +361,10 @@ function renderTickets(list) {
           <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>
           ${t.operario || '—'}
         </span>
+        ${t.cantidad ? `<span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><line x1="8" y1="5" x2="8" y2="11"/><line x1="5" y1="8" x2="11" y2="8"/></svg>
+          Cant: <strong>${parseFloat(t.cantidad).toLocaleString()} und</strong>
+        </span>` : ''}
         <span>
           <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/></svg>
           Límite: ${t.fechaLim || '—'}
@@ -363,6 +372,7 @@ function renderTickets(list) {
       </div>
       <div class="tk-footer">
         <span class="urgency" style="color:${urgencia.color}">${t.estado !== 'COMPLETADO' ? urgencia.texto : '✓ Completado'}</span>
+        ${t.estado === 'COMPLETADO' ? `<button onclick="eliminarTicket('${t.numero}')" style="background:var(--red-dim);border:1px solid var(--red);color:var(--red);border-radius:var(--radius-sm);padding:4px 10px;font-size:11px;font-family:var(--font);cursor:pointer">Eliminar</button>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -393,11 +403,13 @@ function cerrarModal(e) {
 
 async function guardarTicket() {
   const codigo   = document.getElementById('tk_codigo').value.trim();
+  const cantidad = document.getElementById('tk_cantidad').value.trim();
   const orden    = document.getElementById('tk_orden').value;
   const operario = document.getElementById('tk_operario').value;
   const fecha    = document.getElementById('tk_fecha').value;
 
   if (!codigo)   { showToast('Ingresa el código de producto', 'error'); return; }
+  if (!cantidad) { showToast('Ingresa la cantidad requerida', 'error'); return; }
   if (!orden)    { showToast('Selecciona la orden vinculada', 'error'); return; }
   if (!operario) { showToast('Selecciona el operario', 'error'); return; }
   if (!fecha)    { showToast('Ingresa la fecha límite', 'error'); return; }
@@ -407,13 +419,12 @@ async function guardarTicket() {
   btn.innerHTML = '<div class="spinner"></div> Guardando...';
   showToast('Guardando ticket...', 'loading');
 
-  // Generar número de ticket
   const num = 'TKT-' + Date.now().toString().slice(-4);
   const fechaFmt = new Date(fecha + 'T00:00:00').toLocaleDateString('es-PE', {day:'2-digit',month:'2-digit',year:'numeric'});
 
   const payload = {
     accion: 'nuevoTicket',
-    ticket: { numero: num, codigo, descripcion: '', orden, operario, fechaLim: fechaFmt, estado: 'PENDIENTE' }
+    ticket: { numero: num, codigo, cantidad, descripcion: '', orden, operario, fechaLim: fechaFmt, estado: 'PENDIENTE' }
   };
 
   try {
@@ -421,6 +432,7 @@ async function guardarTicket() {
     showToast(`✓ Ticket ${num} creado para ${operario}`, 'success');
     cerrarModal();
     document.getElementById('tk_codigo').value = '';
+    document.getElementById('tk_cantidad').value = '';
     document.getElementById('tk_orden').value = '';
     document.getElementById('tk_operario').value = '';
     setTimeout(() => cargarDatos(), 1000);
@@ -429,6 +441,20 @@ async function guardarTicket() {
   } finally {
     btn.disabled = false;
     btn.innerHTML = 'Crear ticket';
+  }
+}
+
+async function eliminarTicket(numero) {
+  if (!confirm(`¿Eliminar el ticket ${numero}? Esta acción no se puede deshacer.`)) return;
+  showToast('Eliminando ticket...', 'loading');
+  try {
+    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ accion: 'eliminarTicket', numero }) });
+    showToast(`✓ Ticket ${numero} eliminado`, 'success');
+    tickets = tickets.filter(t => t.numero !== numero);
+    filtrar();
+    actualizarStats();
+  } catch(e) {
+    showToast('Error al eliminar', 'error');
   }
 }
 
