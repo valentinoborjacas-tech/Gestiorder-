@@ -4,7 +4,6 @@
     window.location.href = 'login.html';
     return;
   }
-
   try {
     const user = JSON.parse(session);
     const currentPage = window.location.pathname.split('/').pop();
@@ -15,22 +14,21 @@
       return;
     }
 
-    // Si es admin e intenta entrar a operario.html, redirigir a index
-    if (user.rol === 'admin' && currentPage === 'operario.html') {
-      // Admins sí pueden ver operario.html — no redirigir
+    // Si no tiene sesión activa y llega a index.html, redirigir a dashboard
+    if (user.rol === 'admin' && currentPage === '') {
+      window.location.href = 'dashboard.html';
+      return;
     }
 
     // Mostrar nombre del usuario en el sidebar
     document.addEventListener('DOMContentLoaded', function() {
       const userEl = document.getElementById('sidebarUser');
-      if (userEl) {
-        userEl.textContent = user.name || user.email;
-      }
-      // Mostrar badge de rol
+      if (userEl) userEl.textContent = user.name || user.email;
+
       const rolEl = document.getElementById('sidebarRol');
       if (rolEl) {
         rolEl.textContent = user.rol === 'admin' ? 'Administrador' : 'Operario';
-        rolEl.style.color = user.rol === 'admin' ? 'var(--accent2)' : 'var(--green)';
+        rolEl.style.color = user.rol === 'admin' ? '#5DCD00' : '#5DCD00';
       }
     });
 
