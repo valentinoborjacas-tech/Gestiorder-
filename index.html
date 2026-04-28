@@ -155,6 +155,7 @@ textarea { resize: vertical; min-height: 60px; }
     <div style="padding:10px 16px;border-bottom:1px solid var(--border);margin-bottom:8px">
       <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Sesión activa</div>
       <div id="sidebarUser" style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+      <div id="sidebarRol" style="font-size:10px;margin-top:2px;font-family:var(--mono)"></div>
       <button onclick="cerrarSesion()" style="margin-top:6px;background:transparent;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0;font-family:var(--font)">Cerrar sesión →</button>
     </div>
 
@@ -163,8 +164,6 @@ textarea { resize: vertical; min-height: 60px; }
     <a class="nav-item" href="seguimiento.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>Seguimiento</a>
     <a class="nav-item" href="tickets.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v8H2z"/><path d="M10 4v8"/></svg>Tickets Fab.</a>
     <a class="nav-item" href="despacho.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="6" width="10" height="8" rx="1"/><path d="M11 9h2l2 3v2h-4"/><circle cx="4" cy="14" r="1.5"/><circle cx="13" cy="14" r="1.5"/></svg>Despacho</a>
-    <div class="nav-section">Producción</div>
-    <a class="nav-item" href="operario.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Operario</a>
     <div class="nav-section">Consultas</div>
     <a class="nav-item" href="stock.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Stock</a>
   </div>
@@ -274,7 +273,7 @@ textarea { resize: vertical; min-height: 60px; }
 <script>
 // ─── CONFIG ───────────────────────────────────────────────
 const SHEET_ID = '11T0XhAxlytdM3JO9hpGxi7VUL3vXuXkV';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby583PyhVZAaTU2-IpxtIzBlejGkweMLpbWNzU6FMca0oAKEEXTMb-Tcimf7FDjpIb8GA/exec'; // Se llenará con la URL del Apps Script
+const SCRIPT_URL = ''; // Se llenará con la URL del Apps Script
 
 // ─── STATE ────────────────────────────────────────────────
 let clientes = [];
@@ -617,5 +616,3 @@ function showToast(msg, type = 'success') {
 </script>
 </body>
 </html>
-
-
