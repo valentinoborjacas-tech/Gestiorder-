@@ -1,41 +1,24 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GestiOrder — Seguimiento</title>
+<title>GestiOrder — Stock</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f0f11;
-  --surface: #17171a;
-  --surface2: #1e1e22;
-  --surface3: #26262c;
-  --border: #2e2e35;
-  --border2: #3a3a44;
-  --accent: #6c5ce7;
-  --accent2: #a29bfe;
-  --accent-dim: rgba(108,92,231,0.15);
-  --green: #00b894;
-  --green-dim: rgba(0,184,148,0.12);
-  --yellow: #fdcb6e;
-  --yellow-dim: rgba(253,203,110,0.12);
-  --red: #e17055;
-  --red-dim: rgba(225,112,85,0.12);
-  --blue: #74b9ff;
-  --blue-dim: rgba(116,185,255,0.12);
-  --text: #e8e8f0;
-  --text2: #9090a8;
-  --text3: #55556a;
-  --font: 'DM Sans', sans-serif;
-  --mono: 'DM Mono', monospace;
-  --radius: 10px;
-  --radius-sm: 6px;
+  --bg:#0f0f11;--surface:#17171a;--surface2:#1e1e22;--surface3:#26262c;
+  --border:#2e2e35;--border2:#3a3a44;
+  --accent:#6c5ce7;--accent2:#a29bfe;--accent-dim:rgba(108,92,231,0.15);
+  --green:#00b894;--green-dim:rgba(0,184,148,0.12);
+  --yellow:#fdcb6e;--yellow-dim:rgba(253,203,110,0.12);
+  --red:#e17055;--red-dim:rgba(225,112,85,0.12);
+  --text:#e8e8f0;--text2:#9090a8;--text3:#55556a;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --radius:10px;--radius-sm:6px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
 
 .app { display: flex; min-height: 100vh; }
 .sidebar { width: 200px; background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; display: flex; flex-direction: column; }
@@ -51,121 +34,71 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 
 
 
-.logo-name { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.3px; }
-.logo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
-.nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 16px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all .15s; border-left: 2px solid transparent; }
-.nav-item:hover { color: var(--text); background: var(--surface2); }
-.nav-item.active { color: var(--accent2); border-left-color: var(--accent); background: var(--accent-dim); }
-.nav-icon { width: 15px; height: 15px; opacity: .7; }
-.nav-section { font-size: 10px; color: var(--text3); padding: 12px 16px 4px; text-transform: uppercase; letter-spacing: .8px; font-family: var(--mono); }
 
-.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
-.topbar { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); position: sticky; top: 0; z-index: 10; flex-shrink: 0; }
-.topbar-title { font-size: 15px; font-weight: 500; }
-.topbar-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
 
-.layout { display: flex; flex: 1; overflow: hidden; }
-.list-panel { width: 340px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; display: flex; flex-direction: column; }
-.detail-panel { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+
+
+
+
+.main{width:100%;overflow-y:auto}
+.topbar{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:10}
+.topbar-title{font-size:15px;font-weight:500}
+.topbar-sub{font-size:12px;color:var(--text3);margin-top:1px}
+.content{padding:20px 24px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.stat-val{font-size:24px;font-weight:600;font-family:var(--mono)}
+.stat-lab{font-size:11px;color:var(--text3);margin-top:4px}
 
 /* FILTERS */
-.filters { padding: 12px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
-.search-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; color: var(--text); font-family: var(--font); font-size: 13px; }
-.search-input:focus { outline: none; border-color: var(--accent); }
-.search-input::placeholder { color: var(--text3); }
-.pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.pill { padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); background: transparent; font-size: 11px; cursor: pointer; color: var(--text2); font-family: var(--mono); transition: all .15s; }
-.pill:hover { border-color: var(--border2); color: var(--text); }
-.pill.on { background: var(--accent-dim); color: var(--accent2); border-color: var(--accent); }
+.filters-bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.search-input{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;color:var(--text);font-family:var(--font);font-size:13px;width:260px}
+.search-input:focus{outline:none;border-color:var(--accent)}
+.search-input::placeholder{color:var(--text3)}
+select{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;color:var(--text);font-family:var(--font);font-size:12px}
+.pills{display:flex;gap:6px}
+.pill{padding:4px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;font-size:11px;cursor:pointer;color:var(--text2);font-family:var(--mono);transition:all .15s}
+.pill.on{background:var(--accent-dim);color:var(--accent2);border-color:var(--accent)}
+.count-badge{background:var(--surface3);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--text2);font-family:var(--mono);margin-left:auto}
 
-/* ORDER LIST */
-.ord-item { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .12s; }
-.ord-item:hover { background: var(--surface2); }
-.ord-item.active { background: var(--accent-dim); border-left: 2px solid var(--accent); }
-.ord-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
-.ord-num { font-family: var(--mono); font-size: 12px; color: var(--accent2); }
-.ord-client { font-size: 13px; font-weight: 500; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ord-dest { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
-.ord-meta { display: flex; justify-content: space-between; align-items: center; }
-.ord-date { font-size: 11px; color: var(--text3); }
-.prog-wrap { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
-.prog-bar { background: var(--surface3); border-radius: 4px; height: 4px; flex: 1; overflow: hidden; }
-.prog-fill { height: 100%; border-radius: 4px; transition: width .3s; }
-.prog-txt { font-size: 10px; color: var(--text3); white-space: nowrap; font-family: var(--mono); }
+/* TABLE */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-size:10px;font-weight:500;color:var(--text3);background:var(--surface2);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.4px;font-family:var(--mono)}
+th.r{text-align:right}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+.code-cell{font-family:var(--mono);font-size:11px;color:var(--accent2)}
+.qty-cell{font-family:var(--mono);text-align:right;font-size:13px}
+
+/* STOCK INDICATOR */
+.stock-bar-wrap{display:flex;align-items:center;gap:8px}
+.stock-bar{background:var(--surface3);border-radius:3px;height:5px;width:80px;overflow:hidden;flex-shrink:0}
+.stock-fill{height:100%;border-radius:3px}
+.stock-num{font-family:var(--mono);font-size:12px;min-width:60px;text-align:right}
 
 /* BADGE */
-.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 500; font-family: var(--mono); white-space: nowrap; }
-.b-pend { background: var(--yellow-dim); color: var(--yellow); }
-.b-part { background: var(--blue-dim); color: var(--blue); }
-.b-done { background: var(--green-dim); color: var(--green); }
-.b-tick { background: var(--red-dim); color: var(--red); }
-.b-cancel { background: var(--surface3); color: var(--text3); }
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;font-family:var(--mono)}
+.b-ok{background:var(--green-dim);color:var(--green)}
+.b-low{background:var(--yellow-dim);color:var(--yellow)}
+.b-zero{background:var(--red-dim);color:var(--red)}
 
-/* DETAIL */
-.detail-header { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; }
-.dh-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
-.dh-ord { font-size: 20px; font-weight: 600; font-family: var(--mono); color: var(--accent2); }
-.dh-client { font-size: 14px; margin-top: 3px; }
-.dh-dest { font-size: 12px; color: var(--text3); margin-top: 2px; }
-.dh-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
-.dh-stat { text-align: center; }
-.dh-stat .val { font-size: 20px; font-weight: 600; font-family: var(--mono); }
-.dh-stat .lab { font-size: 10px; color: var(--text3); margin-top: 3px; text-transform: uppercase; letter-spacing: .4px; }
-.dh-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 14px; }
-.info-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 8px; background: var(--surface2); border-radius: var(--radius-sm); }
-.info-label { color: var(--text3); }
-.info-val { color: var(--text); font-weight: 500; }
+/* ALERT BANNER */
+.alert-banner{background:var(--red-dim);border:1px solid var(--red);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--red)}
+.alert-banner svg{flex-shrink:0}
 
-/* TIMELINE */
-.tl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
-.card-title { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 16px; font-family: var(--mono); }
-.tl { display: flex; flex-direction: column; }
-.tl-row { display: flex; gap: 14px; padding-bottom: 20px; position: relative; }
-.tl-row:last-child { padding-bottom: 0; }
-.tl-left { display: flex; flex-direction: column; align-items: center; width: 14px; flex-shrink: 0; }
-.tl-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; z-index: 1; margin-top: 2px; }
-.dot-done { background: var(--accent); }
-.dot-active { background: var(--yellow); box-shadow: 0 0 0 3px rgba(253,203,110,0.2); }
-.dot-pend { background: var(--surface3); border: 1.5px solid var(--border2); }
-.dot-alert { background: var(--red); box-shadow: 0 0 0 3px rgba(225,112,85,0.2); }
-.tl-line { flex: 1; width: 1.5px; background: var(--border); margin-top: 4px; }
-.tl-body { flex: 1; }
-.tl-stage { font-size: 13px; font-weight: 500; }
-.tl-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
-.tl-time { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
-.tl-chip { display: inline-flex; padding: 2px 7px; border-radius: 4px; font-size: 10px; margin-top: 5px; font-family: var(--mono); }
-.chip-ok { background: var(--green-dim); color: var(--green); }
-.chip-warn { background: var(--yellow-dim); color: var(--yellow); }
-.chip-err { background: var(--red-dim); color: var(--red); }
-.chip-info { background: var(--blue-dim); color: var(--blue); }
-
-/* ITEMS TABLE */
-.items-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
-.items-table { width: 100%; border-collapse: collapse; }
-.items-table th { padding: 7px 10px; text-align: left; font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
-.items-table td { padding: 9px 10px; font-size: 12px; border-bottom: 1px solid var(--border); }
-.items-table tr:last-child td { border-bottom: none; }
-.items-table tr:hover td { background: var(--surface2); }
-.code-cell { font-family: var(--mono); font-size: 11px; color: var(--accent2); }
-.qty-cell { font-family: var(--mono); text-align: right; }
-.prog-item { display: flex; align-items: center; gap: 6px; }
-.prog-item .bar { background: var(--surface3); border-radius: 3px; height: 5px; width: 60px; overflow: hidden; }
-.prog-item .fill { height: 100%; border-radius: 3px; }
-.prog-item .pct { font-size: 10px; color: var(--text3); font-family: var(--mono); white-space: nowrap; }
-
-/* EMPTY / LOADING */
-.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 10px; color: var(--text3); padding: 40px; text-align: center; }
-.empty svg { opacity: .3; }
-.spinner { width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--accent2); border-radius: 50%; animation: spin .6s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
-
-.toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; z-index: 1000; transform: translateY(80px); opacity: 0; transition: all .3s; }
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast.success { border-left: 3px solid var(--green); }
-.toast.error { border-left: 3px solid var(--red); }
-.toast.loading { border-left: 3px solid var(--accent); }
-
-.count-badge { background: var(--surface3); border-radius: 20px; padding: 2px 8px; font-size: 11px; color: var(--text2); font-family: var(--mono); }
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;gap:10px;color:var(--text3);text-align:center}
+.spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent2);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;font-size:13px;z-index:1000;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.loading{border-left:3px solid var(--accent)}
 </style>
 </head>
 <body>
@@ -174,47 +107,68 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
     <div class="logo"><div class="logo-name">GestiOrder</div><div class="logo-sub">v1.0</div></div>
     <div class="nav-section">Operaciones</div>
     <a class="nav-item" href="index.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="9" y2="9"/></svg>Nueva Orden</a>
-    <a class="nav-item active" href="seguimiento.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>Seguimiento</a>
+    <a class="nav-item" href="seguimiento.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>Seguimiento</a>
     <a class="nav-item" href="tickets.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v8H2z"/><path d="M10 4v8"/></svg>Tickets Fab.</a>
     <a class="nav-item" href="despacho.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="6" width="10" height="8" rx="1"/><path d="M11 9h2l2 3v2h-4"/><circle cx="4" cy="14" r="1.5"/><circle cx="13" cy="14" r="1.5"/></svg>Despacho</a>
     <div class="nav-section">Producción</div>
     <a class="nav-item" href="operario.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Operario</a>
     <div class="nav-section">Consultas</div>
-    <a class="nav-item" href="stock.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Stock</a>
+    <a class="nav-item active" href="stock.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Stock</a>
   </div>
   <div class="main">
     <div class="topbar">
       <div>
-        <div class="topbar-title">Seguimiento de órdenes</div>
-        <div class="topbar-sub">Consulta el estado e ítems de cada orden</div>
+        <div class="topbar-title">Consulta de stock</div>
+        <div class="topbar-sub">Stock en tiempo real desde tu inventario</div>
       </div>
-      <span class="count-badge" id="countBadge">— órdenes</span>
+      <button onclick="cargarDatos()" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;color:var(--text2);font-size:12px;font-family:var(--font);cursor:pointer;display:flex;align-items:center;gap:6px">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 1,1 4,1"/><path d="M1,1 A7,7,0,1,1,3,12"/></svg>
+        Actualizar
+      </button>
     </div>
 
-    <div class="layout">
-      <!-- LISTA -->
-      <div class="list-panel">
-        <div class="filters">
-          <input class="search-input" type="text" placeholder="Buscar orden o cliente..." id="searchInput" oninput="filtrar()">
-          <div class="pills" id="pillGroup">
-            <span class="pill on" data-st="all" onclick="setPill(this)">Todas</span>
-            <span class="pill" data-st="PENDIENTE" onclick="setPill(this)">Pendiente</span>
-            <span class="pill" data-st="PARCIAL ENVIADO" onclick="setPill(this)">Parcial</span>
-            <span class="pill" data-st="ENTREGADO" onclick="setPill(this)">Entregado</span>
-          </div>
-        </div>
-        <div id="orderList">
-          <div class="empty"><div class="spinner"></div><span>Cargando órdenes...</span></div>
-        </div>
+    <div class="content">
+      <div class="stats">
+        <div class="stat-card"><div class="stat-val" id="stTotal">—</div><div class="stat-lab">Productos totales</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="stOk">—</div><div class="stat-lab">Con stock</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--yellow)" id="stLow">—</div><div class="stat-lab">Stock bajo</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--red)" id="stZero">—</div><div class="stat-lab">Sin stock</div></div>
       </div>
 
-      <!-- DETALLE -->
-      <div class="detail-panel" id="detailPanel">
-        <div class="empty" id="noSel">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="24" cy="24" r="20"/><polyline points="24,14 24,24 30,30"/></svg>
-          <div style="font-size:13px">Selecciona una orden para ver su detalle</div>
+      <div id="alertBanner" style="display:none"></div>
+
+      <div class="filters-bar">
+        <input class="search-input" type="text" placeholder="Buscar código o descripción..." id="searchInput" oninput="filtrar()">
+        <select id="filtroEmpresa" onchange="filtrar()">
+          <option value="">Todas las empresas</option>
+          <option value="Casconi">CASCONI PLAST</option>
+          <option value="VYS">V&S POLIBAGS</option>
+        </select>
+        <div class="pills" id="pillGroup">
+          <span class="pill on" data-st="all" onclick="setPill(this)">Todos</span>
+          <span class="pill" data-st="ok" onclick="setPill(this)">Con stock</span>
+          <span class="pill" data-st="low" onclick="setPill(this)">Stock bajo</span>
+          <span class="pill" data-st="zero" onclick="setPill(this)">Sin stock</span>
         </div>
-        <div id="detailContent" style="display:none"></div>
+        <span class="count-badge" id="countBadge">— productos</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descripción</th>
+              <th class="r">Entradas</th>
+              <th class="r">Salidas</th>
+              <th class="r">Stock disponible</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <tr><td colspan="6"><div class="empty"><div class="spinner"></div><span>Cargando stock...</span></div></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -224,69 +178,37 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 
 <script>
 const SHEET_ID = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9NRV2FcnD2i3y1xrPx84eiCie23HZjVqoRN01fydfkjM_pgZmxRAqqN73m7aNkVCphw/exec';
+const UMBRAL_BAJO = 500; // stock menor a este valor = alerta amarilla
 
-let ordenes = [];
-let itemsPorOrden = {};
+let productos = [];
 let activeSt = 'all';
-let activeId = null;
 
-// ─── INIT ─────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  await cargarDatos();
-});
+document.addEventListener('DOMContentLoaded', cargarDatos);
 
 async function cargarDatos() {
-  showToast('Cargando órdenes...', 'loading');
+  showToast('Actualizando stock...', 'loading');
+  document.getElementById('tableBody').innerHTML = '<tr><td colspan="6"><div class="empty"><div class="spinner"></div><span>Cargando...</span></div></td></tr>';
   try {
-    const urlOrdenes = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDENES&range=A3:J500`;
-    const urlItems   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDEN_ITEMS&range=A3:J2000`;
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=STOCK_CONSULTA&range=A4:F2000`;
+    const raw = await fetch(url).then(r => r.text());
+    const data = parseGviz(raw).filter(r => r[0] && r[0] !== 'COD. PRODUCTO');
 
-    const [rOrd, rItems] = await Promise.all([
-      fetch(urlOrdenes).then(r => r.text()),
-      fetch(urlItems).then(r => r.text())
-    ]);
-
-    const rawOrd   = parseGviz(rOrd).filter(r => r[0]);
-    const rawItems = parseGviz(rItems).filter(r => r[0]);
-
-    ordenes = rawOrd.map(r => ({
-      numero:      r[0]?.trim() || '',
-      fechaOrden:  r[1]?.trim() || '',
+    productos = data.map(r => ({
+      codigo:      r[0]?.trim() || '',
+      descripcion: r[1]?.trim() || '',
       cliente:     r[2]?.trim() || '',
-      destinatario:r[3]?.trim() || '',
-      empresa:     r[4]?.trim() || '',
-      fechaEntrega:r[5]?.trim() || '',
-      estado:      r[6]?.trim() || 'PENDIENTE',
-      origen:      r[7]?.trim() || '',
-      entrega1:    r[8]?.trim() || '',
-      notas:       r[9]?.trim() || '',
+      entradas:    parseFloat(r[3]) || 0,
+      salidas:     parseFloat(r[4]) || 0,
+      stock:       parseFloat(r[5]) || 0,
     }));
 
-    // Agrupar ítems por orden
-    rawItems.forEach(r => {
-      const num = r[0]?.trim();
-      if (!num) return;
-      if (!itemsPorOrden[num]) itemsPorOrden[num] = [];
-      itemsPorOrden[num].push({
-        orden:       num,
-        codigo:      r[1]?.trim() || '',
-        descripcion: r[2]?.trim() || '',
-        litraje:     r[3]?.trim() || '',
-        medida:      r[4]?.trim() || '',
-        fuelle:      r[5]?.trim() || '',
-        cantidad:    parseFloat(r[6]) || 0,
-        env1:        parseFloat(r[7]) || 0,
-        env2:        parseFloat(r[8]) || 0,
-        estado:      r[9]?.trim() || 'PENDIENTE',
-      });
-    });
-
     filtrar();
-    showToast(`${ordenes.length} órdenes cargadas`, 'success');
+    actualizarStats();
+    mostrarAlertas();
+    showToast(`${productos.length} productos cargados`, 'success');
   } catch(e) {
-    showToast('Error cargando datos', 'error');
-    document.getElementById('orderList').innerHTML = `<div class="empty"><span style="color:var(--red)">Error al conectar con el Sheet</span><span style="font-size:11px">Verifica que el Sheet sea público</span></div>`;
+    showToast('Error al cargar stock', 'error');
+    document.getElementById('tableBody').innerHTML = '<tr><td colspan="6"><div class="empty" style="color:var(--red)">Error al conectar con el Sheet</div></td></tr>';
   }
 }
 
@@ -294,21 +216,35 @@ function parseGviz(raw) {
   try {
     const json = JSON.parse(raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
     return (json.table.rows || []).map(row =>
-      (json.table.cols || []).map((_, i) => row.c[i] ? (row.c[i].v !== null ? String(row.c[i].v) : '') : '')
+      (json.table.cols || []).map((col, i) => {
+        const cell = row.c[i];
+        if (!cell || cell.v === null) return '';
+        return String(cell.v);
+      })
     );
   } catch(e) { return []; }
 }
 
-// ─── FILTROS ──────────────────────────────────────────────
+function getEstado(stock) {
+  if (stock <= 0)          return 'zero';
+  if (stock < UMBRAL_BAJO) return 'low';
+  return 'ok';
+}
+
 function filtrar() {
-  const q = document.getElementById('searchInput').value.toLowerCase().trim();
-  const filtered = ordenes.filter(o => {
-    if (activeSt !== 'all' && o.estado !== activeSt) return false;
-    if (q && !o.numero.toLowerCase().includes(q) && !o.cliente.toLowerCase().includes(q)) return false;
+  const q  = document.getElementById('searchInput').value.toLowerCase().trim();
+  const emp = document.getElementById('filtroEmpresa').value.toLowerCase();
+
+  const filtered = productos.filter(p => {
+    const est = getEstado(p.stock);
+    if (activeSt !== 'all' && est !== activeSt) return false;
+    if (emp && !p.codigo.toLowerCase().includes(emp) && !p.cliente.toLowerCase().includes(emp)) return false;
+    if (q && !p.codigo.toLowerCase().includes(q) && !p.descripcion.toLowerCase().includes(q)) return false;
     return true;
   });
-  renderList(filtered);
-  document.getElementById('countBadge').textContent = `${filtered.length} órdenes`;
+
+  renderTabla(filtered);
+  document.getElementById('countBadge').textContent = `${filtered.length} productos`;
 }
 
 function setPill(el) {
@@ -318,402 +254,64 @@ function setPill(el) {
   filtrar();
 }
 
-// ─── RENDER LISTA ─────────────────────────────────────────
-function renderList(list) {
-  const el = document.getElementById('orderList');
+function actualizarStats() {
+  const ok   = productos.filter(p => getEstado(p.stock) === 'ok').length;
+  const low  = productos.filter(p => getEstado(p.stock) === 'low').length;
+  const zero = productos.filter(p => getEstado(p.stock) === 'zero').length;
+  document.getElementById('stTotal').textContent = productos.length;
+  document.getElementById('stOk').textContent    = ok;
+  document.getElementById('stLow').textContent   = low;
+  document.getElementById('stZero').textContent  = zero;
+}
+
+function mostrarAlertas() {
+  const criticos = productos.filter(p => getEstado(p.stock) === 'zero');
+  const banner   = document.getElementById('alertBanner');
+  if (criticos.length > 0) {
+    banner.style.display = 'flex';
+    banner.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2L14 13H2Z"/><line x1="8" y1="7" x2="8" y2="10"/><circle cx="8" cy="12" r=".5" fill="currentColor"/></svg>
+      <span><strong>${criticos.length} producto${criticos.length>1?'s':''} sin stock:</strong> ${criticos.slice(0,5).map(p=>p.codigo).join(', ')}${criticos.length>5?' y más...':''}</span>`;
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function renderTabla(list) {
+  const tbody = document.getElementById('tableBody');
   if (!list.length) {
-    el.innerHTML = '<div class="empty"><span>Sin resultados</span></div>';
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><span>Sin resultados</span></div></td></tr>';
     return;
   }
-  el.innerHTML = '';
-  list.forEach(o => {
-    const items = itemsPorOrden[o.numero] || [];
-    const totalCant = items.reduce((s, i) => s + i.cantidad, 0);
-    const totalEnv = items.reduce((s, i) => s + i.env1 + i.env2, 0);
-    const pct = totalCant > 0 ? Math.round(totalEnv / totalCant * 100) : 0;
-    const progColor = o.estado === 'ENTREGADO' ? 'var(--green)' : o.estado === 'PARCIAL ENVIADO' ? 'var(--blue)' : 'var(--text3)';
 
-    const div = document.createElement('div');
-    div.className = 'ord-item' + (activeId === o.numero ? ' active' : '');
-    div.innerHTML = `
-      <div class="ord-top">
-        <span class="ord-num">${o.numero}</span>
-        <span class="badge ${stClass(o.estado)}">${stLabel(o.estado)}</span>
-      </div>
-      <div class="ord-client">${o.cliente}</div>
-      ${o.destinatario ? `<div class="ord-dest">→ ${o.destinatario}</div>` : ''}
-      <div class="ord-meta">
-        <span class="ord-date">Entrega: ${o.fechaEntrega || '—'}</span>
-        <span class="ord-date">${items.length} ítems</span>
-      </div>
-      <div class="prog-wrap">
-        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${progColor}"></div></div>
-        <span class="prog-txt">${totalEnv.toLocaleString()}/${totalCant.toLocaleString()}</span>
-      </div>`;
-    div.onclick = () => seleccionarOrden(o.numero);
-    el.appendChild(div);
-  });
-}
+  // Calcular max stock para la barra proporcional
+  const maxStock = Math.max(...list.map(p => p.stock), 1);
 
-// ─── DETALLE ──────────────────────────────────────────────
-function seleccionarOrden(num) {
-  activeId = num;
-  // Re-render list para marcar activo
-  filtrar();
+  tbody.innerHTML = list.map(p => {
+    const est   = getEstado(p.stock);
+    const pct   = Math.min(Math.round(p.stock / maxStock * 100), 100);
+    const color = est === 'ok' ? 'var(--green)' : est === 'low' ? 'var(--yellow)' : 'var(--red)';
+    const badgeClass = est === 'ok' ? 'b-ok' : est === 'low' ? 'b-low' : 'b-zero';
+    const badgeText  = est === 'ok' ? 'OK' : est === 'low' ? 'Stock bajo' : 'Sin stock';
 
-  const o = ordenes.find(x => x.numero === num);
-  if (!o) return;
-  const items = itemsPorOrden[num] || [];
-
-  document.getElementById('noSel').style.display = 'none';
-  const dc = document.getElementById('detailContent');
-  dc.style.display = 'block';
-
-  const totalItems = items.length;
-  const totalCant  = items.reduce((s, i) => s + i.cantidad, 0);
-  const totalEnv1  = items.reduce((s, i) => s + i.env1, 0);
-  const totalEnv2  = items.reduce((s, i) => s + i.env2, 0);
-  const totalEnv   = totalEnv1 + totalEnv2;
-  const totalPend  = totalCant - totalEnv;
-  const pct        = totalCant > 0 ? Math.round(totalEnv / totalCant * 100) : 0;
-  const sinStock   = items.filter(i => i.estado === 'SIN STOCK').length;
-
-  // Línea de tiempo dinámica
-  const stages = buildTimeline(o, items, totalEnv1, totalEnv2, sinStock);
-
-  // Tabla ítems
-  const itemsRows = items.map(item => {
-    const pctItem = item.cantidad > 0 ? Math.round((item.env1 + item.env2) / item.cantidad * 100) : 0;
-    const fillColor = pctItem === 100 ? 'var(--green)' : pctItem > 0 ? 'var(--blue)' : 'var(--surface3)';
-    const pend = item.cantidad - item.env1 - item.env2;
     return `<tr>
-      <td class="code-cell">${item.codigo}</td>
-      <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${item.descripcion}">${item.descripcion}</td>
-      <td class="qty-cell">${item.cantidad.toLocaleString()}</td>
-      <td class="qty-cell" style="color:var(--blue)">${item.env1.toLocaleString()}</td>
-      <td class="qty-cell" style="color:var(--accent2)">${item.env2.toLocaleString()}</td>
-      <td class="qty-cell" style="color:${pend > 0 ? 'var(--yellow)' : 'var(--text3)'}">${pend.toLocaleString()}</td>
+      <td class="code-cell">${p.codigo}</td>
+      <td style="font-size:12px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.descripcion}">${p.descripcion||'—'}</td>
+      <td class="qty-cell" style="color:var(--green)">${p.entradas.toLocaleString()}</td>
+      <td class="qty-cell" style="color:var(--red)">${p.salidas.toLocaleString()}</td>
       <td>
-        <div class="prog-item">
-          <div class="bar"><div class="fill" style="width:${pctItem}%;background:${fillColor}"></div></div>
-          <span class="pct">${pctItem}%</span>
+        <div class="stock-bar-wrap">
+          <div class="stock-bar"><div class="stock-fill" style="width:${pct}%;background:${color}"></div></div>
+          <span class="stock-num" style="color:${color}">${p.stock.toLocaleString()}</span>
         </div>
       </td>
-      <td><span class="badge ${itemStClass(item.estado)}">${item.estado}</span></td>
+      <td><span class="badge ${badgeClass}">${badgeText}</span></td>
     </tr>`;
   }).join('');
-
-  dc.innerHTML = `
-    <div class="detail-header">
-      <div class="dh-top">
-        <div>
-          <div class="dh-ord">${o.numero}</div>
-          <div class="dh-client">${o.cliente}</div>
-          ${o.destinatario ? `<div class="dh-dest">→ ${o.destinatario}</div>` : ''}
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span class="badge ${stClass(o.estado)}" style="font-size:11px;padding:4px 10px">${stLabel(o.estado)}</span>
-          <button onclick="imprimirSeguimiento('${o.numero}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:12px;font-family:var(--font);cursor:pointer">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="1" width="10" height="14" rx="1"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
-            PDF
-          </button>
-          ${o.estado !== 'CANCELADO' ? `<button onclick="pedirAnularOrden('${o.numero}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--red);background:var(--red-dim);color:var(--red);font-size:12px;font-family:var(--font);cursor:pointer">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
-            Anular orden
-          </button>` : ''}
-        </div>
-      </div>
-      <div class="dh-stats">
-        <div class="dh-stat"><div class="val">${totalItems}</div><div class="lab">Ítems</div></div>
-        <div class="dh-stat"><div class="val" style="color:var(--blue)">${totalEnv.toLocaleString()}</div><div class="lab">Despachado</div></div>
-        <div class="dh-stat"><div class="val" style="color:${totalPend > 0 ? 'var(--yellow)' : 'var(--green)'}">${totalPend.toLocaleString()}</div><div class="lab">Pendiente</div></div>
-        <div class="dh-stat"><div class="val">${pct}%</div><div class="lab">Avance</div></div>
-      </div>
-      <div style="margin-top:12px">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px"><span>Progreso total</span><span style="font-family:var(--mono)">${pct}%</span></div>
-        <div style="background:var(--surface3);border-radius:4px;height:7px;overflow:hidden">
-          <div style="width:${pct}%;height:100%;background:${o.estado==='ENTREGADO'?'var(--green)':'var(--accent)'};border-radius:4px;transition:width .4s"></div>
-        </div>
-      </div>
-      <div class="dh-info">
-        <div class="info-row"><span class="info-label">Empresa</span><span class="info-val">${o.empresa}</span></div>
-        <div class="info-row"><span class="info-label">Origen</span><span class="info-val">${o.origen || '—'}</span></div>
-        <div class="info-row"><span class="info-label">Fecha orden</span><span class="info-val">${o.fechaOrden || '—'}</span></div>
-        <div class="info-row"><span class="info-label">Fecha entrega</span><span class="info-val">${o.fechaEntrega || '—'}</span></div>
-        ${o.notas ? `<div class="info-row" style="grid-column:1/-1"><span class="info-label">Notas</span><span class="info-val">${o.notas}</span></div>` : ''}
-      </div>
-    </div>
-
-    <div class="tl-card">
-      <div class="card-title">Línea de tiempo</div>
-      <div class="tl">${stages}</div>
-    </div>
-
-    <div class="items-card">
-      <div class="card-title">Ítems de la orden — ${totalItems} total</div>
-      <table class="items-table">
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Descripción</th>
-            <th style="text-align:right">Pedido</th>
-            <th style="text-align:right">1ra Entrega</th>
-            <th style="text-align:right">2da Entrega</th>
-            <th style="text-align:right">Pendiente</th>
-            <th>Avance</th>
-            <th>Estado</th>
-          </tr>
-        </thead>
-        <tbody>${itemsRows}</tbody>
-      </table>
-    </div>
-  `;
-}
-
-function buildTimeline(o, items, env1, env2, sinStock) {
-  const stages = [];
-
-  // 1. Orden recibida
-  stages.push({
-    dot: 'dot-done',
-    title: 'Orden recibida',
-    desc: `${items.length} ítems registrados · Origen: ${o.origen || '—'}`,
-    time: o.fechaOrden,
-    chip: 'ok', chipTxt: 'Registrado'
-  });
-
-  // 2. Sin stock
-  if (sinStock > 0) {
-    stages.push({
-      dot: 'dot-alert',
-      title: 'Ítems sin stock detectados',
-      desc: `${sinStock} ítem${sinStock > 1 ? 's' : ''} requieren fabricación`,
-      time: o.fechaOrden,
-      chip: 'err', chipTxt: 'Sin stock'
-    });
-  }
-
-  // 3. Primera entrega
-  const has1 = env1 > 0;
-  stages.push({
-    dot: has1 ? 'dot-done' : 'dot-pend',
-    title: '1ra entrega / despacho',
-    desc: has1 ? `${env1.toLocaleString()} unidades despachadas` : 'Pendiente',
-    time: has1 ? (o.entrega1 || '—') : 'Pendiente',
-    chip: has1 ? 'info' : '', chipTxt: has1 ? 'Parcial enviado' : ''
-  });
-
-  // 4. Segunda entrega
-  const has2 = env2 > 0;
-  const need2 = items.some(i => i.cantidad > i.env1);
-  if (has2 || need2) {
-    stages.push({
-      dot: has2 ? 'dot-done' : 'dot-pend',
-      title: '2da entrega / despacho',
-      desc: has2 ? `${env2.toLocaleString()} unidades despachadas` : 'Pendiente — esperando stock o fabricación',
-      time: has2 ? '—' : 'Pendiente',
-      chip: has2 ? 'ok' : '', chipTxt: 'Completado'
-    });
-  }
-
-  // 5. Entrega final
-  const isDone = o.estado === 'ENTREGADO';
-  stages.push({
-    dot: isDone ? 'dot-done' : 'dot-pend',
-    title: 'Entrega final confirmada',
-    desc: isDone ? 'Orden completada' : `Fecha comprometida: ${o.fechaEntrega || '—'}`,
-    time: isDone ? o.fechaEntrega : 'Pendiente',
-    chip: isDone ? 'ok' : '', chipTxt: 'Entregado'
-  });
-
-  return stages.map((s, i) => {
-    const isLast = i === stages.length - 1;
-    const chipHtml = s.chip ? `<span class="tl-chip chip-${s.chip}">${s.chipTxt}</span>` : '';
-    const activeStyle = s.dot === 'dot-pend' ? 'color:var(--text3)' : '';
-    return `<div class="tl-row">
-      <div class="tl-left">
-        <div class="tl-dot ${s.dot}"></div>
-        ${!isLast ? '<div class="tl-line"></div>' : ''}
-      </div>
-      <div class="tl-body">
-        <div class="tl-stage" style="${activeStyle}">${s.title}</div>
-        <div class="tl-desc" style="${activeStyle}">${s.desc}</div>
-        <div class="tl-time">${s.time}</div>
-        ${chipHtml}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ─── HELPERS ──────────────────────────────────────────────
-function stLabel(st) {
-  return { 'PENDIENTE':'Pendiente','PARCIAL ENVIADO':'Parcial enviado','ENTREGADO':'Entregado','CANCELADO':'Cancelado' }[st] || st;
-}
-function stClass(st) {
-  return { 'PENDIENTE':'b-pend','PARCIAL ENVIADO':'b-part','ENTREGADO':'b-done','CANCELADO':'b-cancel' }[st] || 'b-pend';
-}
-function itemStClass(st) {
-  return { 'PENDIENTE':'b-pend','PARCIAL':'b-part','COMPLETADO':'b-done','SIN STOCK':'b-tick' }[st] || 'b-pend';
-}
-
-function pedirAnularOrden(num) {
-  const o = ordenes.find(x => x.numero === num);
-  if (!o) return;
-  // Double confirmation
-  const conf1 = confirm(`¿Seguro que quieres anular la orden ${num} de ${o.cliente}?\n\nEsta acción marcará la orden como CANCELADO.`);
-  if (!conf1) return;
-  const conf2 = confirm(`Confirmación final: ¿Anular definitivamente la orden ${num}?`);
-  if (!conf2) return;
-  anularOrden(num);
-}
-
-async function anularOrden(num) {
-  showToast('Anulando orden...', 'loading');
-  try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ accion: 'actualizarEstadoOrden', numero: num, estado: 'CANCELADO' })
-    });
-    showToast(`✓ Orden ${num} anulada`, 'success');
-    // Update local state
-    const o = ordenes.find(x => x.numero === num);
-    if (o) o.estado = 'CANCELADO';
-    setTimeout(() => { filtrar(); seleccionarOrden(num); }, 800);
-  } catch(e) {
-    showToast('Error al anular', 'error');
-  }
-}
-
-function imprimirSeguimiento(num) {
-  const o = ordenes.find(x => x.numero === num);
-  if (!o) return;
-  const items = itemsPorOrden[num] || [];
-  const totalCant = items.reduce((s,i) => s + i.cantidad, 0);
-  const totalEnv1 = items.reduce((s,i) => s + i.env1, 0);
-  const totalEnv2 = items.reduce((s,i) => s + i.env2, 0);
-  const totalEnv  = totalEnv1 + totalEnv2;
-  const totalPend = totalCant - totalEnv;
-  const pct       = totalCant > 0 ? Math.round(totalEnv / totalCant * 100) : 0;
-  const hoy       = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
-
-  const win = window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>Seguimiento ${o.numero}</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}
-    .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}
-    .empresa{font-size:18px;font-weight:700}
-    .empresa-sub{font-size:11px;color:#555;margin-top:3px}
-    .ord-num{font-size:20px;font-weight:700;font-family:monospace}
-    .badges{display:flex;gap:6px;margin-top:6px}
-    .badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-    .b-pend{background:#FFF3CD;color:#856404}
-    .b-part{background:#CCE5FF;color:#004085}
-    .b-done{background:#D4EDDA;color:#155724}
-    .info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}
-    .field .lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.3px}
-    .field .val{font-weight:600;margin-top:2px;font-size:13px}
-    .prog-section{margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}
-    .prog-label{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:5px}
-    .prog-bar{background:#ddd;border-radius:4px;height:10px;overflow:hidden}
-    .prog-fill{height:100%;border-radius:4px;background:#6c5ce7}
-    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-    .stat{text-align:center;padding:8px;background:#f7f7f7;border-radius:4px}
-    .stat .v{font-size:20px;font-weight:700;font-family:monospace}
-    .stat .l{font-size:10px;color:#666;text-transform:uppercase;margin-top:2px}
-    table{width:100%;border-collapse:collapse;margin-bottom:16px}
-    th{background:#111;color:#fff;padding:7px 10px;text-align:left;font-size:11px}
-    th.r{text-align:right}
-    td{padding:7px 10px;border-bottom:1px solid #ddd;font-size:12px}
-    td.r{text-align:right;font-family:monospace}
-    td.code{font-family:monospace;font-size:11px;color:#444}
-    tr:nth-child(even) td{background:#f9f9f9}
-    .tfoot-row td{background:#f0f0f0;font-weight:700;border-top:2px solid #111}
-    .footer{margin-top:20px;padding-top:12px;border-top:1px solid #ccc;font-size:10px;color:#888;text-align:center}
-    @media print{body{padding:10px}}
-  </style></head><body>
-  <div class="header">
-    <div>
-      <div class="empresa">${o.empresa}</div>
-      <div class="empresa-sub">Reporte de seguimiento de orden — Documento interno</div>
-    </div>
-    <div style="text-align:right">
-      <div class="ord-num">${o.numero}</div>
-      <div class="badges">
-        <span class="badge ${ o.estado==='ENTREGADO'?'b-done':o.estado==='PARCIAL ENVIADO'?'b-part':'b-pend' }">${o.estado}</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="info-grid">
-    <div class="field"><div class="lbl">Cliente</div><div class="val">${o.cliente}${o.destinatario?' → '+o.destinatario:''}</div></div>
-    <div class="field"><div class="lbl">Fecha de orden</div><div class="val">${o.fechaOrden||'—'}</div></div>
-    <div class="field"><div class="lbl">Fecha de entrega</div><div class="val">${o.fechaEntrega||'—'}</div></div>
-    <div class="field"><div class="lbl">Empresa</div><div class="val">${o.empresa}</div></div>
-    <div class="field"><div class="lbl">Origen</div><div class="val">${o.origen||'—'}</div></div>
-    <div class="field"><div class="lbl">Impreso el</div><div class="val">${hoy}</div></div>
-    ${o.notas?`<div class="field" style="grid-column:1/-1"><div class="lbl">Notas</div><div class="val">${o.notas}</div></div>`:''}
-  </div>
-
-  <div class="stats-row">
-    <div class="stat"><div class="v">${items.length}</div><div class="l">Ítems totales</div></div>
-    <div class="stat"><div class="v" style="color:#0056b3">${totalEnv.toLocaleString()}</div><div class="l">Despachado</div></div>
-    <div class="stat"><div class="v" style="color:${totalPend>0?'#856404':'#155724'}">${totalPend.toLocaleString()}</div><div class="l">Pendiente</div></div>
-    <div class="stat"><div class="v">${pct}%</div><div class="l">Avance</div></div>
-  </div>
-
-  <div class="prog-section">
-    <div class="prog-label"><span>Progreso de entrega</span><span>${pct}%</span></div>
-    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${o.estado==='ENTREGADO'?'#00b894':'#6c5ce7'}"></div></div>
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>#</th><th>Código</th><th>Descripción</th>
-        <th class="r">Pedido</th><th class="r">1ra Entrega</th>
-        <th class="r">2da Entrega</th><th class="r">Pendiente</th>
-        <th class="r">Avance</th><th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${items.map((item,i) => {
-        const pend = item.cantidad - item.env1 - item.env2;
-        const pctI = item.cantidad > 0 ? Math.round((item.env1+item.env2)/item.cantidad*100) : 0;
-        return `<tr>
-          <td>${i+1}</td>
-          <td class="code">${item.codigo}</td>
-          <td>${item.descripcion||'—'}</td>
-          <td class="r">${item.cantidad.toLocaleString()}</td>
-          <td class="r">${item.env1.toLocaleString()}</td>
-          <td class="r">${item.env2.toLocaleString()}</td>
-          <td class="r" style="color:${pend>0?'#856404':'#555'}">${pend.toLocaleString()}</td>
-          <td class="r">${pctI}%</td>
-          <td>${item.estado}</td>
-        </tr>`;
-      }).join('')}
-    </tbody>
-    <tfoot>
-      <tr class="tfoot-row">
-        <td colspan="3" style="text-align:right">TOTALES:</td>
-        <td class="r">${totalCant.toLocaleString()}</td>
-        <td class="r">${totalEnv1.toLocaleString()}</td>
-        <td class="r">${totalEnv2.toLocaleString()}</td>
-        <td class="r">${totalPend.toLocaleString()}</td>
-        <td class="r">${pct}%</td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
-  <div class="footer">GestiOrder — ${o.empresa} · Generado el ${hoy} · Documento de uso interno</div>
-  <script>window.onload=()=>window.print()<\/script>
-  </body></html>`);
-  win.document.close();
 }
 
 let toastTimer;
-function showToast(msg, type = 'success') {
+function showToast(msg, type='success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = `toast ${type} show`;
@@ -723,3 +321,4 @@ function showToast(msg, type = 'success') {
 </script>
 </body>
 </html>
+
