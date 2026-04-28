@@ -293,7 +293,18 @@ function parseGviz(raw) {
   try {
     const json = JSON.parse(raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
     return (json.table.rows || []).map(row =>
-      (json.table.cols || []).map((_, i) => row.c[i] ? (row.c[i].v !== null ? String(row.c[i].v) : '') : '')
+      (json.table.cols || []).map((col, i) => {
+        const cell = row.c[i];
+        if (!cell || cell.v === null) return '';
+        if (col.type === 'date' || col.type === 'datetime') {
+          const m = String(cell.v).match(/Date\((\d+),(\d+),(\d+)/);
+          if (m) {
+            const d = new Date(+m[1], +m[2], +m[3]);
+            return d.toLocaleDateString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric'});
+          }
+        }
+        return String(cell.v);
+      })
     );
   } catch(e) { return []; }
 }
