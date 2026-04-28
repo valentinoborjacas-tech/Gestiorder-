@@ -603,119 +603,83 @@ function imprimirSeguimiento(num) {
   const hoy       = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
 
   const win = window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>Seguimiento ${o.numero}</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}
-    .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}
-    .empresa{font-size:18px;font-weight:700}
-    .empresa-sub{font-size:11px;color:#555;margin-top:3px}
-    .ord-num{font-size:20px;font-weight:700;font-family:monospace}
-    .badges{display:flex;gap:6px;margin-top:6px}
-    .badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
-    .b-pend{background:#FFF3CD;color:#856404}
-    .b-part{background:#CCE5FF;color:#004085}
-    .b-done{background:#D4EDDA;color:#155724}
-    .info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}
-    .field .lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.3px}
-    .field .val{font-weight:600;margin-top:2px;font-size:13px}
-    .prog-section{margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}
-    .prog-label{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:5px}
-    .prog-bar{background:#ddd;border-radius:4px;height:10px;overflow:hidden}
-    .prog-fill{height:100%;border-radius:4px;background:#6c5ce7}
-    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-    .stat{text-align:center;padding:8px;background:#f7f7f7;border-radius:4px}
-    .stat .v{font-size:20px;font-weight:700;font-family:monospace}
-    .stat .l{font-size:10px;color:#666;text-transform:uppercase;margin-top:2px}
-    table{width:100%;border-collapse:collapse;margin-bottom:16px}
-    th{background:#111;color:#fff;padding:7px 10px;text-align:left;font-size:11px}
-    th.r{text-align:right}
-    td{padding:7px 10px;border-bottom:1px solid #ddd;font-size:12px}
-    td.r{text-align:right;font-family:monospace}
-    td.code{font-family:monospace;font-size:11px;color:#444}
-    tr:nth-child(even) td{background:#f9f9f9}
-    .tfoot-row td{background:#f0f0f0;font-weight:700;border-top:2px solid #111}
-    .footer{margin-top:20px;padding-top:12px;border-top:1px solid #ccc;font-size:10px;color:#888;text-align:center}
-    @media print{body{padding:10px}}
-  </style></head><body>
-<script src="auth.js"></script>
-  <div class="header">
-    <div>
-      <div class="empresa">${o.empresa}</div>
-      <div class="empresa-sub">Reporte de seguimiento de orden — Documento interno</div>
-    </div>
-    <div style="text-align:right">
-      <div class="ord-num">${o.numero}</div>
-      <div class="badges">
-        <span class="badge ${ o.estado==='ENTREGADO'?'b-done':o.estado==='PARCIAL ENVIADO'?'b-part':'b-pend' }">${o.estado}</span>
-      </div>
-    </div>
-  </div>
+  const htmlParts = [];
+  htmlParts.push('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  htmlParts.push('<title>Seguimiento ' + o.numero + '</title>');
+  htmlParts.push('<style>');
+  htmlParts.push('*{box-sizing:border-box;margin:0;padding:0}');
+  htmlParts.push('body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}');
+  htmlParts.push('.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}');
+  htmlParts.push('.empresa{font-size:18px;font-weight:700}');
+  htmlParts.push('.empresa-sub{font-size:11px;color:#555;margin-top:3px}');
+  htmlParts.push('.ord-num{font-size:20px;font-weight:700;font-family:monospace}');
+  htmlParts.push('.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}');
+  htmlParts.push('.b-pend{background:#FFF3CD;color:#856404}.b-part{background:#CCE5FF;color:#004085}.b-done{background:#D4EDDA;color:#155724}');
+  htmlParts.push('.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}');
+  htmlParts.push('.field .lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.3px}');
+  htmlParts.push('.field .val{font-weight:600;margin-top:2px;font-size:13px}');
+  htmlParts.push('.prog-section{margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}');
+  htmlParts.push('.prog-label{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:5px}');
+  htmlParts.push('.prog-bar{background:#ddd;border-radius:4px;height:10px;overflow:hidden}');
+  htmlParts.push('.prog-fill{height:100%;border-radius:4px}');
+  htmlParts.push('.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}');
+  htmlParts.push('.stat{text-align:center;padding:8px;background:#f7f7f7;border-radius:4px}');
+  htmlParts.push('.stat .v{font-size:20px;font-weight:700;font-family:monospace}');
+  htmlParts.push('.stat .l{font-size:10px;color:#666;text-transform:uppercase;margin-top:2px}');
+  htmlParts.push('table{width:100%;border-collapse:collapse;margin-bottom:16px}');
+  htmlParts.push('th{background:#111;color:#fff;padding:7px 10px;text-align:left;font-size:11px}');
+  htmlParts.push('th.r{text-align:right}td{padding:7px 10px;border-bottom:1px solid #ddd;font-size:12px}');
+  htmlParts.push('td.r{text-align:right;font-family:monospace}td.code{font-family:monospace;font-size:11px;color:#444}');
+  htmlParts.push('tr:nth-child(even) td{background:#f9f9f9}');
+  htmlParts.push('.tfoot-row td{background:#f0f0f0;font-weight:700;border-top:2px solid #111}');
+  htmlParts.push('.footer{margin-top:20px;padding-top:12px;border-top:1px solid #ccc;font-size:10px;color:#888;text-align:center}');
+  htmlParts.push('@media print{body{padding:10px}}');
+  htmlParts.push('</style></head><body>');
 
-  <div class="info-grid">
-    <div class="field"><div class="lbl">Cliente</div><div class="val">${o.cliente}${o.destinatario?' → '+o.destinatario:''}</div></div>
-    <div class="field"><div class="lbl">Fecha de orden</div><div class="val">${o.fechaOrden||'—'}</div></div>
-    <div class="field"><div class="lbl">Fecha de entrega</div><div class="val">${o.fechaEntrega||'—'}</div></div>
-    <div class="field"><div class="lbl">Empresa</div><div class="val">${o.empresa}</div></div>
-    <div class="field"><div class="lbl">Origen</div><div class="val">${o.origen||'—'}</div></div>
-    <div class="field"><div class="lbl">Impreso el</div><div class="val">${hoy}</div></div>
-    ${o.notas?`<div class="field" style="grid-column:1/-1"><div class="lbl">Notas</div><div class="val">${o.notas}</div></div>`:''}
-  </div>
+  // Header
+  const badgeClass = o.estado === 'ENTREGADO' ? 'b-done' : o.estado === 'PARCIAL ENVIADO' ? 'b-part' : 'b-pend';
+  htmlParts.push('<div class="header"><div><div class="empresa">' + o.empresa + '</div><div class="empresa-sub">Reporte de seguimiento de orden — Documento interno</div></div>');
+  htmlParts.push('<div style="text-align:right"><div class="ord-num">' + o.numero + '</div><div style="margin-top:6px"><span class="badge ' + badgeClass + '">' + o.estado + '</span></div></div></div>');
 
-  <div class="stats-row">
-    <div class="stat"><div class="v">${items.length}</div><div class="l">Ítems totales</div></div>
-    <div class="stat"><div class="v" style="color:#0056b3">${totalEnv.toLocaleString()}</div><div class="l">Despachado</div></div>
-    <div class="stat"><div class="v" style="color:${totalPend>0?'#856404':'#155724'}">${totalPend.toLocaleString()}</div><div class="l">Pendiente</div></div>
-    <div class="stat"><div class="v">${pct}%</div><div class="l">Avance</div></div>
-  </div>
+  // Info grid
+  htmlParts.push('<div class="info-grid">');
+  htmlParts.push('<div class="field"><div class="lbl">Cliente</div><div class="val">' + o.cliente + (o.destinatario ? ' → ' + o.destinatario : '') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Fecha de orden</div><div class="val">' + (o.fechaOrden||'—') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Fecha de entrega</div><div class="val">' + (o.fechaEntrega||'—') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Empresa</div><div class="val">' + o.empresa + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Origen</div><div class="val">' + (o.origen||'—') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Impreso el</div><div class="val">' + hoy + '</div></div>');
+  if (o.notas) htmlParts.push('<div class="field" style="grid-column:1/-1"><div class="lbl">Notas</div><div class="val">' + o.notas + '</div></div>');
+  htmlParts.push('</div>');
 
-  <div class="prog-section">
-    <div class="prog-label"><span>Progreso de entrega</span><span>${pct}%</span></div>
-    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${o.estado==='ENTREGADO'?'#00b894':'#6c5ce7'}"></div></div>
-  </div>
+  // Stats
+  htmlParts.push('<div class="stats-row">');
+  htmlParts.push('<div class="stat"><div class="v">' + items.length + '</div><div class="l">Ítems totales</div></div>');
+  htmlParts.push('<div class="stat"><div class="v" style="color:#0056b3">' + totalEnv.toLocaleString() + '</div><div class="l">Despachado</div></div>');
+  htmlParts.push('<div class="stat"><div class="v" style="color:' + (totalPend>0?'#856404':'#155724') + '">' + totalPend.toLocaleString() + '</div><div class="l">Pendiente</div></div>');
+  htmlParts.push('<div class="stat"><div class="v">' + pct + '%</div><div class="l">Avance</div></div>');
+  htmlParts.push('</div>');
 
-  <table>
-    <thead>
-      <tr>
-        <th>#</th><th>Código</th><th>Descripción</th>
-        <th class="r">Pedido</th><th class="r">1ra Entrega</th>
-        <th class="r">2da Entrega</th><th class="r">Pendiente</th>
-        <th class="r">Avance</th><th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${items.map((item,i) => {
-        const pend = item.cantidad - item.env1 - item.env2;
-        const pctI = item.cantidad > 0 ? Math.round((item.env1+item.env2)/item.cantidad*100) : 0;
-        return `<tr>
-          <td>${i+1}</td>
-          <td class="code">${item.codigo}</td>
-          <td>${item.descripcion||'—'}</td>
-          <td class="r">${item.cantidad.toLocaleString()}</td>
-          <td class="r">${item.env1.toLocaleString()}</td>
-          <td class="r">${item.env2.toLocaleString()}</td>
-          <td class="r" style="color:${pend>0?'#856404':'#555'}">${pend.toLocaleString()}</td>
-          <td class="r">${pctI}%</td>
-          <td>${item.estado}</td>
-        </tr>`;
-      }).join('')}
-    </tbody>
-    <tfoot>
-      <tr class="tfoot-row">
-        <td colspan="3" style="text-align:right">TOTALES:</td>
-        <td class="r">${totalCant.toLocaleString()}</td>
-        <td class="r">${totalEnv1.toLocaleString()}</td>
-        <td class="r">${totalEnv2.toLocaleString()}</td>
-        <td class="r">${totalPend.toLocaleString()}</td>
-        <td class="r">${pct}%</td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
-  <div class="footer">GestiOrder — ${o.empresa} · Generado el ${hoy} · Documento de uso interno</div>
-  <script>window.onload=()=>window.print()<\/script>
-  </body></html>`);
+  // Progress bar
+  const progColor = o.estado === 'ENTREGADO' ? '#00b894' : '#6c5ce7';
+  htmlParts.push('<div class="prog-section"><div class="prog-label"><span>Progreso de entrega</span><span>' + pct + '%</span></div>');
+  htmlParts.push('<div class="prog-bar"><div class="prog-fill" style="width:' + pct + '%;background:' + progColor + '"></div></div></div>');
+
+  // Items table
+  htmlParts.push('<table><thead><tr><th>#</th><th>Código</th><th>Descripción</th><th class="r">Pedido</th><th class="r">1ra Entrega</th><th class="r">2da Entrega</th><th class="r">Pendiente</th><th class="r">Avance</th><th>Estado</th></tr></thead><tbody>');
+  items.forEach(function(item, i) {
+    const pend = item.cantidad - item.env1 - item.env2;
+    const pctI = item.cantidad > 0 ? Math.round((item.env1+item.env2)/item.cantidad*100) : 0;
+    htmlParts.push('<tr><td>' + (i+1) + '</td><td class="code">' + item.codigo + '</td><td>' + (item.descripcion||'—') + '</td><td class="r">' + item.cantidad.toLocaleString() + '</td><td class="r">' + item.env1.toLocaleString() + '</td><td class="r">' + item.env2.toLocaleString() + '</td><td class="r" style="color:' + (pend>0?'#856404':'#555') + '">' + pend.toLocaleString() + '</td><td class="r">' + pctI + '%</td><td>' + item.estado + '</td></tr>');
+  });
+  htmlParts.push('</tbody><tfoot><tr class="tfoot-row"><td colspan="3" style="text-align:right">TOTALES:</td><td class="r">' + totalCant.toLocaleString() + '</td><td class="r">' + totalEnv1.toLocaleString() + '</td><td class="r">' + totalEnv2.toLocaleString() + '</td><td class="r">' + totalPend.toLocaleString() + '</td><td class="r">' + pct + '%</td><td></td></tr></tfoot></table>');
+
+  // Footer
+  htmlParts.push('<div class="footer">GestiOrder — ' + o.empresa + ' · Generado el ' + hoy + ' · Documento de uso interno</div>');
+  htmlParts.push('<script>window.onload=function(){window.print()}<\/script>');
+  htmlParts.push('</body></html>');
+
+  win.document.write(htmlParts.join(''));
   win.document.close();
 }
 
