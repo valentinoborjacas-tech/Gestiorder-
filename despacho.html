@@ -3,23 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GestiOrder — Despacho</title>
+<title>GestiOrder — Seguimiento</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0f0f11;--surface:#17171a;--surface2:#1e1e22;--surface3:#26262c;
-  --border:#2e2e35;--border2:#3a3a44;
-  --accent:#6c5ce7;--accent2:#a29bfe;--accent-dim:rgba(108,92,231,0.15);
-  --green:#00b894;--green-dim:rgba(0,184,148,0.12);
-  --yellow:#fdcb6e;--yellow-dim:rgba(253,203,110,0.12);
-  --red:#e17055;--red-dim:rgba(225,112,85,0.12);
-  --blue:#74b9ff;--blue-dim:rgba(116,185,255,0.12);
-  --text:#e8e8f0;--text2:#9090a8;--text3:#55556a;
-  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-  --radius:10px;--radius-sm:6px;
+  --bg: #0f0f11;
+  --surface: #17171a;
+  --surface2: #1e1e22;
+  --surface3: #26262c;
+  --border: #2e2e35;
+  --border2: #3a3a44;
+  --accent: #6c5ce7;
+  --accent2: #a29bfe;
+  --accent-dim: rgba(108,92,231,0.15);
+  --green: #00b894;
+  --green-dim: rgba(0,184,148,0.12);
+  --yellow: #fdcb6e;
+  --yellow-dim: rgba(253,203,110,0.12);
+  --red: #e17055;
+  --red-dim: rgba(225,112,85,0.12);
+  --blue: #74b9ff;
+  --blue-dim: rgba(116,185,255,0.12);
+  --text: #e8e8f0;
+  --text2: #9090a8;
+  --text3: #55556a;
+  --font: 'DM Sans', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 10px;
+  --radius-sm: 6px;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+
 
 .app { display: flex; min-height: 100vh; }
 .sidebar { width: 200px; background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; display: flex; flex-direction: column; }
@@ -35,96 +50,121 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14
 
 
 
+.logo-name { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.3px; }
+.logo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 16px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all .15s; border-left: 2px solid transparent; }
+.nav-item:hover { color: var(--text); background: var(--surface2); }
+.nav-item.active { color: var(--accent2); border-left-color: var(--accent); background: var(--accent-dim); }
+.nav-icon { width: 15px; height: 15px; opacity: .7; }
+.nav-section { font-size: 10px; color: var(--text3); padding: 12px 16px 4px; text-transform: uppercase; letter-spacing: .8px; font-family: var(--mono); }
 
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+.topbar { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); position: sticky; top: 0; z-index: 10; flex-shrink: 0; }
+.topbar-title { font-size: 15px; font-weight: 500; }
+.topbar-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
 
+.layout { display: flex; flex: 1; overflow: hidden; }
+.list-panel { width: 340px; border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; display: flex; flex-direction: column; }
+.detail-panel { flex: 1; overflow-y: auto; padding: 20px 24px; }
 
+/* FILTERS */
+.filters { padding: 12px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.search-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; color: var(--text); font-family: var(--font); font-size: 13px; }
+.search-input:focus { outline: none; border-color: var(--accent); }
+.search-input::placeholder { color: var(--text3); }
+.pills { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border); background: transparent; font-size: 11px; cursor: pointer; color: var(--text2); font-family: var(--mono); transition: all .15s; }
+.pill:hover { border-color: var(--border2); color: var(--text); }
+.pill.on { background: var(--accent-dim); color: var(--accent2); border-color: var(--accent); }
 
+/* ORDER LIST */
+.ord-item { padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .12s; }
+.ord-item:hover { background: var(--surface2); }
+.ord-item.active { background: var(--accent-dim); border-left: 2px solid var(--accent); }
+.ord-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.ord-num { font-family: var(--mono); font-size: 12px; color: var(--accent2); }
+.ord-client { font-size: 13px; font-weight: 500; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ord-dest { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.ord-meta { display: flex; justify-content: space-between; align-items: center; }
+.ord-date { font-size: 11px; color: var(--text3); }
+.prog-wrap { display: flex; align-items: center; gap: 6px; margin-top: 5px; }
+.prog-bar { background: var(--surface3); border-radius: 4px; height: 4px; flex: 1; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 4px; transition: width .3s; }
+.prog-txt { font-size: 10px; color: var(--text3); white-space: nowrap; font-family: var(--mono); }
 
+/* BADGE */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 500; font-family: var(--mono); white-space: nowrap; }
+.b-pend { background: var(--yellow-dim); color: var(--yellow); }
+.b-part { background: var(--blue-dim); color: var(--blue); }
+.b-done { background: var(--green-dim); color: var(--green); }
+.b-tick { background: var(--red-dim); color: var(--red); }
+.b-cancel { background: var(--surface3); color: var(--text3); }
 
+/* DETAIL */
+.detail-header { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 16px; }
+.dh-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.dh-ord { font-size: 20px; font-weight: 600; font-family: var(--mono); color: var(--accent2); }
+.dh-client { font-size: 14px; margin-top: 3px; }
+.dh-dest { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.dh-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.dh-stat { text-align: center; }
+.dh-stat .val { font-size: 20px; font-weight: 600; font-family: var(--mono); }
+.dh-stat .lab { font-size: 10px; color: var(--text3); margin-top: 3px; text-transform: uppercase; letter-spacing: .4px; }
+.dh-info { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 14px; }
+.info-row { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 8px; background: var(--surface2); border-radius: var(--radius-sm); }
+.info-label { color: var(--text3); }
+.info-val { color: var(--text); font-weight: 500; }
 
-.main{width:100%;overflow-y:auto}
-.topbar{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:10}
-.topbar-title{font-size:15px;font-weight:500}
-.topbar-sub{font-size:12px;color:var(--text3);margin-top:1px}
-.content{padding:20px 24px}
+/* TIMELINE */
+.tl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
+.card-title { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 16px; font-family: var(--mono); }
+.tl { display: flex; flex-direction: column; }
+.tl-row { display: flex; gap: 14px; padding-bottom: 20px; position: relative; }
+.tl-row:last-child { padding-bottom: 0; }
+.tl-left { display: flex; flex-direction: column; align-items: center; width: 14px; flex-shrink: 0; }
+.tl-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; z-index: 1; margin-top: 2px; }
+.dot-done { background: var(--accent); }
+.dot-active { background: var(--yellow); box-shadow: 0 0 0 3px rgba(253,203,110,0.2); }
+.dot-pend { background: var(--surface3); border: 1.5px solid var(--border2); }
+.dot-alert { background: var(--red); box-shadow: 0 0 0 3px rgba(225,112,85,0.2); }
+.tl-line { flex: 1; width: 1.5px; background: var(--border); margin-top: 4px; }
+.tl-body { flex: 1; }
+.tl-stage { font-size: 13px; font-weight: 500; }
+.tl-desc { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.5; }
+.tl-time { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+.tl-chip { display: inline-flex; padding: 2px 7px; border-radius: 4px; font-size: 10px; margin-top: 5px; font-family: var(--mono); }
+.chip-ok { background: var(--green-dim); color: var(--green); }
+.chip-warn { background: var(--yellow-dim); color: var(--yellow); }
+.chip-err { background: var(--red-dim); color: var(--red); }
+.chip-info { background: var(--blue-dim); color: var(--blue); }
 
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-family:var(--font);cursor:pointer;transition:all .15s}
-.btn:hover{border-color:var(--border2);background:var(--surface3)}
-.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
-.btn-primary:hover{background:#5a4dd4}
-.btn-green{background:var(--green-dim);border-color:var(--green);color:var(--green);font-weight:500}
-.btn-green:hover{background:rgba(0,184,148,0.22)}
-.btn-sm{padding:5px 10px;font-size:12px}
-.btn-ghost{background:transparent;border-color:transparent;color:var(--text2)}
-.btn-ghost:hover{color:var(--text);background:var(--surface2);border-color:transparent}
+/* ITEMS TABLE */
+.items-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 16px; }
+.items-table { width: 100%; border-collapse: collapse; }
+.items-table th { padding: 7px 10px; text-align: left; font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+.items-table td { padding: 9px 10px; font-size: 12px; border-bottom: 1px solid var(--border); }
+.items-table tr:last-child td { border-bottom: none; }
+.items-table tr:hover td { background: var(--surface2); }
+.code-cell { font-family: var(--mono); font-size: 11px; color: var(--accent2); }
+.qty-cell { font-family: var(--mono); text-align: right; }
+.prog-item { display: flex; align-items: center; gap: 6px; }
+.prog-item .bar { background: var(--surface3); border-radius: 3px; height: 5px; width: 60px; overflow: hidden; }
+.prog-item .fill { height: 100%; border-radius: 3px; }
+.prog-item .pct { font-size: 10px; color: var(--text3); font-family: var(--mono); white-space: nowrap; }
 
-.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;font-family:var(--mono);white-space:nowrap}
-.b-pend{background:var(--yellow-dim);color:var(--yellow)}
-.b-part{background:var(--blue-dim);color:var(--blue)}
-.b-done{background:var(--green-dim);color:var(--green)}
+/* EMPTY / LOADING */
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; gap: 10px; color: var(--text3); padding: 40px; text-align: center; }
+.empty svg { opacity: .3; }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border2); border-top-color: var(--accent2); border-radius: 50%; animation: spin .6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px}
-.card-title{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;font-family:var(--mono)}
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; z-index: 1000; transform: translateY(80px); opacity: 0; transition: all .3s; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+.toast.loading { border-left: 3px solid var(--accent); }
 
-/* STEPS */
-.steps{display:flex;gap:0;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.step{flex:1;padding:12px 16px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text3);border-right:1px solid var(--border);transition:all .2s}
-.step:last-child{border-right:none}
-.step.active{background:var(--accent-dim);color:var(--accent2)}
-.step.done{background:var(--green-dim);color:var(--green)}
-.step-num{width:22px;height:22px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;font-family:var(--mono)}
-
-/* ORDEN SELECT */
-.ord-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
-.ord-option{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;transition:all .15s}
-.ord-option:hover{border-color:var(--border2)}
-.ord-option.selected{border-color:var(--accent);background:var(--accent-dim)}
-.ord-option .on{font-family:var(--mono);font-size:11px;color:var(--text3)}
-.ord-option .oc{font-size:14px;font-weight:500;margin:4px 0}
-.ord-option .om{font-size:12px;color:var(--text2)}
-
-/* FORM */
-.form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.form-group{display:flex;flex-direction:column;gap:5px}
-label{font-size:11px;color:var(--text2);font-weight:500}
-input,select{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;color:var(--text);font-family:var(--font);font-size:13px;width:100%}
-input:focus,select:focus{outline:none;border-color:var(--accent)}
-input::placeholder{color:var(--text3)}
-
-/* ITEMS */
-.items-header{display:grid;grid-template-columns:20px 140px 1fr 90px 100px 90px;gap:8px;padding:8px 10px;font-size:11px;color:var(--text3);font-family:var(--mono);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
-.item-row{display:grid;grid-template-columns:20px 140px 1fr 90px 100px 90px;gap:8px;padding:9px 10px;border-bottom:1px solid var(--border);align-items:center;transition:background .1s}
-.item-row:hover{background:var(--surface2)}
-.item-row:last-child{border-bottom:none}
-.item-row input{padding:5px 8px;font-size:12px;text-align:right}
-.code-cell{font-family:var(--mono);font-size:11px;color:var(--accent2)}
-.qty-badge{font-family:var(--mono);font-size:12px;text-align:right;color:var(--text2)}
-.pend-badge{font-family:var(--mono);font-size:12px;text-align:right}
-
-/* CHECKBOX */
-.cb{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
-
-/* SUMMARY */
-.summary-box{background:var(--surface2);border-radius:var(--radius-sm);padding:12px 14px;display:flex;gap:20px;margin-top:10px}
-.sum-item{font-size:12px;color:var(--text2)}
-.sum-item span{color:var(--text);font-weight:500;font-family:var(--mono);margin-left:4px}
-
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;gap:10px;color:var(--text3);text-align:center}
-.spinner{width:14px;height:14px;border:2px solid var(--border2);border-top-color:var(--accent2);border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;font-size:13px;z-index:1000;transform:translateY(80px);opacity:0;transition:all .3s}
-.toast.show{transform:translateY(0);opacity:1}
-.toast.success{border-left:3px solid var(--green)}
-.toast.error{border-left:3px solid var(--red)}
-.toast.loading{border-left:3px solid var(--accent)}
-
-/* ── PDF PRINT STYLES ───────────────────────────────────── */
-@media print {
-  body{background:#fff;color:#000;font-family:Arial,sans-serif;font-size:12px}
-  .app,.sidebar,.topbar,.steps,.no-print{display:none!important}
-  .pdf-doc{display:block!important}
-}
-.pdf-doc{display:none}
+.count-badge { background: var(--surface3); border-radius: 20px; padding: 2px 8px; font-size: 11px; color: var(--text2); font-family: var(--mono); }
 </style>
 </head>
 <body>
@@ -135,198 +175,123 @@ input::placeholder{color:var(--text3)}
     <div style="padding:10px 16px;border-bottom:1px solid var(--border);margin-bottom:8px">
       <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Sesión activa</div>
       <div id="sidebarUser" style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+      <div id="sidebarRol" style="font-size:10px;margin-top:2px;font-family:var(--mono)"></div>
       <button onclick="cerrarSesion()" style="margin-top:6px;background:transparent;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0;font-family:var(--font)">Cerrar sesión →</button>
     </div>
 
     <div class="nav-section">Operaciones</div>
     <a class="nav-item" href="index.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="9" y2="9"/></svg>Nueva Orden</a>
-    <a class="nav-item" href="seguimiento.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>Seguimiento</a>
+    <a class="nav-item active" href="seguimiento.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>Seguimiento</a>
     <a class="nav-item" href="tickets.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v8H2z"/><path d="M10 4v8"/></svg>Tickets Fab.</a>
-    <a class="nav-item active" href="despacho.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="6" width="10" height="8" rx="1"/><path d="M11 9h2l2 3v2h-4"/><circle cx="4" cy="14" r="1.5"/><circle cx="13" cy="14" r="1.5"/></svg>Despacho</a>
-    <div class="nav-section">Producción</div>
-    <a class="nav-item" href="operario.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Operario</a>
+    <a class="nav-item" href="despacho.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="6" width="10" height="8" rx="1"/><path d="M11 9h2l2 3v2h-4"/><circle cx="4" cy="14" r="1.5"/><circle cx="13" cy="14" r="1.5"/></svg>Despacho</a>
     <div class="nav-section">Consultas</div>
     <a class="nav-item" href="stock.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Stock</a>
   </div>
   <div class="main">
     <div class="topbar">
       <div>
-        <div class="topbar-title">Despacho y guías de remisión</div>
-        <div class="topbar-sub">Genera guías para cada entrega</div>
+        <div class="topbar-title">Seguimiento de órdenes</div>
+        <div class="topbar-sub">Consulta el estado e ítems de cada orden</div>
       </div>
+      <span class="count-badge" id="countBadge">— órdenes</span>
     </div>
 
-    <div class="content">
-      <!-- STEPS -->
-      <div class="steps no-print">
-        <div class="step active" id="step1"><div class="step-num">1</div>Seleccionar orden</div>
-        <div class="step" id="step2"><div class="step-num">2</div>Elegir ítems a despachar</div>
-        <div class="step" id="step3"><div class="step-num">3</div>Datos del transporte</div>
-        <div class="step" id="step4"><div class="step-num">4</div>Generar guía</div>
-      </div>
-
-      <!-- PASO 1: SELECCIONAR ORDEN -->
-      <div id="paso1">
-        <div class="card">
-          <div class="card-title">Órdenes pendientes de despacho</div>
-          <div id="ordenesGrid">
-            <div class="empty"><div class="spinner"></div><span>Cargando órdenes...</span></div>
+    <div class="layout">
+      <!-- LISTA -->
+      <div class="list-panel">
+        <div class="filters">
+          <input class="search-input" type="text" placeholder="Buscar orden o cliente..." id="searchInput" oninput="filtrar()">
+          <div class="pills" id="pillGroup">
+            <span class="pill on" data-st="all" onclick="setPill(this)">Todas</span>
+            <span class="pill" data-st="PENDIENTE" onclick="setPill(this)">Pendiente</span>
+            <span class="pill" data-st="PARCIAL ENVIADO" onclick="setPill(this)">Parcial</span>
+            <span class="pill" data-st="ENTREGADO" onclick="setPill(this)">Entregado</span>
           </div>
         </div>
-        <div style="display:flex;justify-content:flex-end">
-          <button class="btn btn-primary" onclick="irPaso2()" id="btnPaso2" disabled>Continuar →</button>
+        <div id="orderList">
+          <div class="empty"><div class="spinner"></div><span>Cargando órdenes...</span></div>
         </div>
       </div>
 
-      <!-- PASO 2: ELEGIR ÍTEMS -->
-      <div id="paso2" style="display:none">
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-            <div class="card-title" style="margin-bottom:0">Ítems pendientes de entrega</div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-sm btn-ghost" onclick="selTodos(true)">Seleccionar todos</button>
-              <button class="btn btn-sm btn-ghost" onclick="selTodos(false)">Limpiar</button>
-            </div>
-          </div>
-          <div class="items-header">
-            <div></div><div>Código</div><div>Descripción</div>
-            <div style="text-align:right">Pedido</div>
-            <div style="text-align:right">A despachar</div>
-            <div style="text-align:right">Pendiente</div>
-          </div>
-          <div id="itemsDespacho"></div>
-          <div class="summary-box" id="summaryBox">
-            <div class="sum-item">Ítems seleccionados:<span id="sumItems">0</span></div>
-            <div class="sum-item">Unidades a despachar:<span id="sumUnidades">0</span></div>
-            <div class="sum-item">Tipo:<span id="sumTipo" style="color:var(--blue)">—</span></div>
-          </div>
+      <!-- DETALLE -->
+      <div class="detail-panel" id="detailPanel">
+        <div class="empty" id="noSel">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="24" cy="24" r="20"/><polyline points="24,14 24,24 30,30"/></svg>
+          <div style="font-size:13px">Selecciona una orden para ver su detalle</div>
         </div>
-        <div style="display:flex;justify-content:space-between">
-          <button class="btn btn-ghost" onclick="irPaso1()">← Volver</button>
-          <button class="btn btn-primary" onclick="irPaso3()" id="btnPaso3" disabled>Continuar →</button>
-        </div>
-      </div>
-
-      <!-- PASO 3: DATOS TRANSPORTE -->
-      <div id="paso3" style="display:none">
-        <div class="card">
-          <div class="card-title">Datos del transporte</div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Transportista *</label>
-              <input type="text" id="transportista" placeholder="Nombre de la empresa o persona">
-            </div>
-            <div class="form-group">
-              <label>Placa de la unidad *</label>
-              <input type="text" id="placa" placeholder="Ej: ABC-123" style="text-transform:uppercase">
-            </div>
-            <div class="form-group">
-              <label>Fecha de despacho</label>
-              <input type="date" id="fechaDespacho">
-            </div>
-            <div class="form-group">
-              <label>N° Entrega</label>
-              <select id="nroEntrega">
-                <option value="1RA ENTREGA">1ra Entrega</option>
-                <option value="2DA ENTREGA">2da Entrega</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Despachado por</label>
-              <input type="text" id="despachador" placeholder="Nombre de quien despacha">
-            </div>
-            <div class="form-group">
-              <label>Observaciones</label>
-              <input type="text" id="obsDespacho" placeholder="Opcional...">
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;justify-content:space-between">
-          <button class="btn btn-ghost" onclick="irPaso2()">← Volver</button>
-          <button class="btn btn-primary" onclick="irPaso4()">Continuar →</button>
-        </div>
-      </div>
-
-      <!-- PASO 4: PREVIEW Y GENERAR -->
-      <div id="paso4" style="display:none">
-        <div class="card" id="previewCard">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-            <div class="card-title" style="margin-bottom:0">Vista previa de la guía</div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-sm" onclick="irPaso3()">← Editar</button>
-              <button class="btn btn-sm btn-ghost" onclick="imprimirOrdenCompleta()">
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="1" width="10" height="14" rx="1"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
-                PDF Orden completa
-              </button>
-              <button class="btn btn-sm" onclick="pedirCerrarOrden()" style="background:var(--red-dim);border-color:var(--red);color:var(--red)">
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
-                Cerrar orden
-              </button>
-              <button class="btn btn-green" onclick="generarGuia()">
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="13,4 6,12 3,9"/></svg>
-                Guardar y generar PDF
-              </button>
-            </div>
-          </div>
-          <div id="previewContent"></div>
-        </div>
+        <div id="detailContent" style="display:none"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- PDF DOCUMENT (hidden, shown on print) -->
-<div class="pdf-doc" id="pdfDoc"></div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-const SHEET_ID   = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby583PyhVZAaTU2-IpxtIzBlejGkweMLpbWNzU6FMca0oAKEEXTMb-Tcimf7FDjpIb8GA/exec';
+const SHEET_ID = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9NRV2FcnD2i3y1xrPx84eiCie23HZjVqoRN01fydfkjM_pgZmxRAqqN73m7aNkVCphw/exec';
 
 let ordenes = [];
 let itemsPorOrden = {};
-let ordenSeleccionada = null;
-let guiaNum = '';
+let activeSt = 'all';
+let activeId = null;
 
+// ─── INIT ─────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('fechaDespacho').value = new Date().toISOString().split('T')[0];
-  guiaNum = 'GR-' + Date.now().toString().slice(-5);
   await cargarDatos();
 });
 
 async function cargarDatos() {
   showToast('Cargando órdenes...', 'loading');
   try {
-    const urlOrd   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDENES&range=A3:J500`;
-    const urlItems = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDEN_ITEMS&range=A3:J2000`;
+    const urlOrdenes = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDENES&range=A3:J500`;
+    const urlItems   = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDEN_ITEMS&range=A3:J2000`;
+
     const [rOrd, rItems] = await Promise.all([
-      fetch(urlOrd).then(r => r.text()),
+      fetch(urlOrdenes).then(r => r.text()),
       fetch(urlItems).then(r => r.text())
     ]);
 
-    ordenes = parseGviz(rOrd).filter(r => r[0] && r[6] !== 'CANCELADO').map(r => ({
-      numero: r[0]?.trim(), fechaOrden: r[1]?.trim(), cliente: r[2]?.trim(),
-      destinatario: r[3]?.trim(), empresa: r[4]?.trim(), fechaEntrega: r[5]?.trim(),
-      estado: r[6]?.trim() || 'PENDIENTE', origen: r[7]?.trim(), notas: r[9]?.trim(),
+    const rawOrd   = parseGviz(rOrd).filter(r => r[0]);
+    const rawItems = parseGviz(rItems).filter(r => r[0]);
+
+    ordenes = rawOrd.map(r => ({
+      numero:      r[0]?.trim() || '',
+      fechaOrden:  r[1]?.trim() || '',
+      cliente:     r[2]?.trim() || '',
+      destinatario:r[3]?.trim() || '',
+      empresa:     r[4]?.trim() || '',
+      fechaEntrega:r[5]?.trim() || '',
+      estado:      r[6]?.trim() || 'PENDIENTE',
+      origen:      r[7]?.trim() || '',
+      entrega1:    r[8]?.trim() || '',
+      notas:       r[9]?.trim() || '',
     }));
 
-    parseGviz(rItems).filter(r => r[0]).forEach(r => {
+    // Agrupar ítems por orden
+    rawItems.forEach(r => {
       const num = r[0]?.trim();
+      if (!num) return;
       if (!itemsPorOrden[num]) itemsPorOrden[num] = [];
       itemsPorOrden[num].push({
-        codigo: r[1]?.trim(), descripcion: r[2]?.trim(),
-        cantidad: parseFloat(r[6]) || 0,
-        env1: parseFloat(r[7]) || 0,
-        env2: parseFloat(r[8]) || 0,
-        estado: r[9]?.trim() || 'PENDIENTE',
+        orden:       num,
+        codigo:      r[1]?.trim() || '',
+        descripcion: r[2]?.trim() || '',
+        litraje:     r[3]?.trim() || '',
+        medida:      r[4]?.trim() || '',
+        fuelle:      r[5]?.trim() || '',
+        cantidad:    parseFloat(r[6]) || 0,
+        env1:        parseFloat(r[7]) || 0,
+        env2:        parseFloat(r[8]) || 0,
+        estado:      r[9]?.trim() || 'PENDIENTE',
       });
     });
 
-    renderOrdenes();
+    filtrar();
     showToast(`${ordenes.length} órdenes cargadas`, 'success');
   } catch(e) {
     showToast('Error cargando datos', 'error');
+    document.getElementById('orderList').innerHTML = `<div class="empty"><span style="color:var(--red)">Error al conectar con el Sheet</span><span style="font-size:11px">Verifica que el Sheet sea público</span></div>`;
   }
 }
 
@@ -334,406 +299,391 @@ function parseGviz(raw) {
   try {
     const json = JSON.parse(raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
     return (json.table.rows || []).map(row =>
-      (json.table.cols || []).map((col, i) => {
-        const cell = row.c[i];
-        if (!cell || cell.v === null) return '';
-        if (col.type === 'date' || col.type === 'datetime') {
-          const m = String(cell.v).match(/Date\((\d+),(\d+),(\d+)/);
-          if (m) { const d = new Date(+m[1],+m[2],+m[3]); return d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
-        }
-        return String(cell.v);
-      })
+      (json.table.cols || []).map((_, i) => row.c[i] ? (row.c[i].v !== null ? String(row.c[i].v) : '') : '')
     );
   } catch(e) { return []; }
 }
 
-// ── PASO 1 ────────────────────────────────────────────────
-function renderOrdenes() {
-  const grid = document.getElementById('ordenesGrid');
-  if (!ordenes.length) { grid.innerHTML = '<div class="empty"><span>No hay órdenes pendientes de despacho</span></div>'; return; }
+// ─── FILTROS ──────────────────────────────────────────────
+function filtrar() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  const filtered = ordenes.filter(o => {
+    if (activeSt !== 'all' && o.estado !== activeSt) return false;
+    if (q && !o.numero.toLowerCase().includes(q) && !o.cliente.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  renderList(filtered);
+  document.getElementById('countBadge').textContent = `${filtered.length} órdenes`;
+}
 
-  const pendientes = ordenes.filter(o => o.estado === 'PENDIENTE');
-  const parciales  = ordenes.filter(o => o.estado === 'PARCIAL ENVIADO');
-  const completas  = ordenes.filter(o => o.estado === 'ENTREGADO');
+function setPill(el) {
+  document.querySelectorAll('#pillGroup .pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  activeSt = el.dataset.st;
+  filtrar();
+}
 
-  function cardHtml(o, soloVer) {
+// ─── RENDER LISTA ─────────────────────────────────────────
+function renderList(list) {
+  const el = document.getElementById('orderList');
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><span>Sin resultados</span></div>';
+    return;
+  }
+  el.innerHTML = '';
+  list.forEach(o => {
     const items = itemsPorOrden[o.numero] || [];
-    const pendItems = items.filter(i => i.cantidad > i.env1 + i.env2).length;
-    const badgeClass = {PENDIENTE:'b-pend','PARCIAL ENVIADO':'b-part',ENTREGADO:'b-done'}[o.estado]||'b-pend';
-    const clickAction = soloVer ? '' : `onclick="selectOrden('${o.numero}')"`;
-    const opacity = soloVer ? 'opacity:.6;cursor:default' : 'cursor:pointer';
-    return `<div class="ord-option" id="opt-${o.numero}" ${clickAction} style="${opacity}">
-      <div class="on">${o.numero}</div>
-      <div class="oc">${o.cliente}${o.destinatario?` → ${o.destinatario}`:''}</div>
-      <div class="om" style="display:flex;justify-content:space-between;margin-top:6px">
-        <span>Entrega: ${o.fechaEntrega||'—'}</span>
-        <span class="badge ${badgeClass}">${o.estado}</span>
+    const totalCant = items.reduce((s, i) => s + i.cantidad, 0);
+    const totalEnv = items.reduce((s, i) => s + i.env1 + i.env2, 0);
+    const pct = totalCant > 0 ? Math.round(totalEnv / totalCant * 100) : 0;
+    const progColor = o.estado === 'ENTREGADO' ? 'var(--green)' : o.estado === 'PARCIAL ENVIADO' ? 'var(--blue)' : 'var(--text3)';
+
+    const div = document.createElement('div');
+    div.className = 'ord-item' + (activeId === o.numero ? ' active' : '');
+    div.innerHTML = `
+      <div class="ord-top">
+        <span class="ord-num">${o.numero}</span>
+        <span class="badge ${stClass(o.estado)}">${stLabel(o.estado)}</span>
       </div>
-      <div class="om" style="margin-top:4px;color:${soloVer?'var(--green)':'var(--yellow)'}">
-        ${soloVer ? '✓ Orden completa' : `${pendItems} ítem${pendItems!==1?'s':''} pendiente${pendItems!==1?'s':''}`}
+      <div class="ord-client">${o.cliente}</div>
+      ${o.destinatario ? `<div class="ord-dest">→ ${o.destinatario}</div>` : ''}
+      <div class="ord-meta">
+        <span class="ord-date">Entrega: ${o.fechaEntrega || '—'}</span>
+        <span class="ord-date">${items.length} ítems</span>
       </div>
-    </div>`;
-  }
-
-  let html = '';
-
-  if (parciales.length) {
-    html += `<div style="font-size:11px;color:var(--blue);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;margin-top:4px">Parciales — 2da entrega pendiente</div>`;
-    html += `<div class="ord-select-grid" style="margin-bottom:16px">${parciales.map(o => cardHtml(o, false)).join('')}</div>`;
-  }
-
-  if (pendientes.length) {
-    html += `<div style="font-size:11px;color:var(--yellow);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Pendientes — sin entrega</div>`;
-    html += `<div class="ord-select-grid" style="margin-bottom:16px">${pendientes.map(o => cardHtml(o, false)).join('')}</div>`;
-  }
-
-  if (completas.length) {
-    html += `<div style="font-size:11px;color:var(--green);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Completadas — solo lectura</div>`;
-    html += `<div class="ord-select-grid">${completas.map(o => cardHtml(o, true)).join('')}</div>`;
-  }
-
-  grid.innerHTML = html;
+      <div class="prog-wrap">
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${progColor}"></div></div>
+        <span class="prog-txt">${totalEnv.toLocaleString()}/${totalCant.toLocaleString()}</span>
+      </div>`;
+    div.onclick = () => seleccionarOrden(o.numero);
+    el.appendChild(div);
+  });
 }
 
-function selectOrden(num) {
-  document.querySelectorAll('.ord-option').forEach(o => o.classList.remove('selected'));
-  document.getElementById(`opt-${num}`)?.classList.add('selected');
-  ordenSeleccionada = ordenes.find(o => o.numero === num);
-  document.getElementById('btnPaso2').disabled = false;
-}
+// ─── DETALLE ──────────────────────────────────────────────
+function seleccionarOrden(num) {
+  activeId = num;
+  // Re-render list para marcar activo
+  filtrar();
 
-// ── PASO 2 ────────────────────────────────────────────────
-function irPaso2() {
-  if (!ordenSeleccionada) return;
-  setStep(2);
-  document.getElementById('paso1').style.display = 'none';
-  document.getElementById('paso2').style.display = 'block';
-  renderItemsDespacho();
-}
+  const o = ordenes.find(x => x.numero === num);
+  if (!o) return;
+  const items = itemsPorOrden[num] || [];
 
-function renderItemsDespacho() {
-  const items = (itemsPorOrden[ordenSeleccionada.numero] || []).filter(i => i.cantidad > i.env1 + i.env2);
-  const container = document.getElementById('itemsDespacho');
-  if (!items.length) { container.innerHTML = '<div class="empty"><span>No hay ítems pendientes en esta orden</span></div>'; return; }
+  document.getElementById('noSel').style.display = 'none';
+  const dc = document.getElementById('detailContent');
+  dc.style.display = 'block';
 
-  container.innerHTML = items.map((item, idx) => {
-    const pendiente = item.cantidad - item.env1 - item.env2;
-    return `<div class="item-row">
-      <input type="checkbox" class="cb" id="chk-${idx}" onchange="actualizarSummary()" checked>
-      <div class="code-cell">${item.codigo}</div>
-      <div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${item.descripcion}">${item.descripcion||'—'}</div>
-      <div class="qty-badge">${item.cantidad.toLocaleString()}</div>
-      <input type="number" min="0" max="${pendiente}" value="${pendiente}" id="desp-${idx}"
-        onchange="actualizarSummary()" style="width:90px">
-      <div class="pend-badge" style="color:var(--yellow)" id="pend-${idx}">${pendiente.toLocaleString()}</div>
-    </div>`;
+  const totalItems = items.length;
+  const totalCant  = items.reduce((s, i) => s + i.cantidad, 0);
+  const totalEnv1  = items.reduce((s, i) => s + i.env1, 0);
+  const totalEnv2  = items.reduce((s, i) => s + i.env2, 0);
+  const totalEnv   = totalEnv1 + totalEnv2;
+  const totalPend  = totalCant - totalEnv;
+  const pct        = totalCant > 0 ? Math.round(totalEnv / totalCant * 100) : 0;
+  const sinStock   = items.filter(i => i.estado === 'SIN STOCK').length;
+
+  // Línea de tiempo dinámica
+  const stages = buildTimeline(o, items, totalEnv1, totalEnv2, sinStock);
+
+  // Tabla ítems
+  const itemsRows = items.map(item => {
+    const pctItem = item.cantidad > 0 ? Math.round((item.env1 + item.env2) / item.cantidad * 100) : 0;
+    const fillColor = pctItem === 100 ? 'var(--green)' : pctItem > 0 ? 'var(--blue)' : 'var(--surface3)';
+    const pend = item.cantidad - item.env1 - item.env2;
+    return `<tr>
+      <td class="code-cell">${item.codigo}</td>
+      <td style="font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${item.descripcion}">${item.descripcion}</td>
+      <td class="qty-cell">${item.cantidad.toLocaleString()}</td>
+      <td class="qty-cell" style="color:var(--blue)">${item.env1.toLocaleString()}</td>
+      <td class="qty-cell" style="color:var(--accent2)">${item.env2.toLocaleString()}</td>
+      <td class="qty-cell" style="color:${pend > 0 ? 'var(--yellow)' : 'var(--text3)'}">${pend.toLocaleString()}</td>
+      <td>
+        <div class="prog-item">
+          <div class="bar"><div class="fill" style="width:${pctItem}%;background:${fillColor}"></div></div>
+          <span class="pct">${pctItem}%</span>
+        </div>
+      </td>
+      <td><span class="badge ${itemStClass(item.estado)}">${item.estado}</span></td>
+    </tr>`;
   }).join('');
 
-  actualizarSummary();
-}
-
-function selTodos(v) {
-  document.querySelectorAll('.cb').forEach(c => c.checked = v);
-  actualizarSummary();
-}
-
-function actualizarSummary() {
-  const items = (itemsPorOrden[ordenSeleccionada.numero] || []).filter(i => i.cantidad > i.env1 + i.env2);
-  let selItems = 0, selUnidades = 0, totalPend = 0;
-  items.forEach((item, idx) => {
-    const chk = document.getElementById(`chk-${idx}`);
-    const inp = document.getElementById(`desp-${idx}`);
-    const pendiente = item.cantidad - item.env1 - item.env2;
-    totalPend += pendiente;
-    if (chk?.checked) {
-      selItems++;
-      selUnidades += parseFloat(inp?.value) || 0;
-    }
-  });
-  document.getElementById('sumItems').textContent = selItems;
-  document.getElementById('sumUnidades').textContent = selUnidades.toLocaleString();
-  const tipo = selUnidades >= totalPend ? 'Entrega completa' : 'Entrega parcial';
-  document.getElementById('sumTipo').textContent = tipo;
-  document.getElementById('sumTipo').style.color = selUnidades >= totalPend ? 'var(--green)' : 'var(--blue)';
-  document.getElementById('btnPaso3').disabled = selItems === 0;
-
-  // Auto-detect entrega number
-  const hasEnv1 = (itemsPorOrden[ordenSeleccionada.numero]||[]).some(i => i.env1 > 0);
-  document.getElementById('nroEntrega').value = hasEnv1 ? '2DA ENTREGA' : '1RA ENTREGA';
-}
-
-// ── PASO 3 ────────────────────────────────────────────────
-function irPaso3() {
-  setStep(3);
-  document.getElementById('paso2').style.display = 'none';
-  document.getElementById('paso3').style.display = 'block';
-}
-
-// ── PASO 4 ────────────────────────────────────────────────
-function irPaso4() {
-  const transp = document.getElementById('transportista').value.trim();
-  const placa  = document.getElementById('placa').value.trim();
-  if (!transp) { showToast('Ingresa el transportista', 'error'); return; }
-  if (!placa)  { showToast('Ingresa la placa', 'error'); return; }
-
-  setStep(4);
-  document.getElementById('paso3').style.display = 'none';
-  document.getElementById('paso4').style.display = 'block';
-  renderPreview();
-}
-
-function getItemsSeleccionados() {
-  const items = (itemsPorOrden[ordenSeleccionada.numero] || []).filter(i => i.cantidad > i.env1 + i.env2);
-  return items.filter((item, idx) => document.getElementById(`chk-${idx}`)?.checked)
-    .map((item, idx) => {
-      const realIdx = (itemsPorOrden[ordenSeleccionada.numero]||[]).filter(i=>i.cantidad>i.env1+i.env2).indexOf(item);
-      return {
-        ...item,
-        aCDespachar: parseFloat(document.getElementById(`desp-${realIdx}`)?.value) || 0
-      };
-    });
-}
-
-function renderPreview() {
-  const o = ordenSeleccionada;
-  const items = getItemsSeleccionados();
-  const transp = document.getElementById('transportista').value.trim();
-  const placa  = document.getElementById('placa').value.trim().toUpperCase();
-  const fecha  = document.getElementById('fechaDespacho').value;
-  const nroEnt = document.getElementById('nroEntrega').value;
-  const obs    = document.getElementById('obsDespacho').value;
-  const totalU = items.reduce((s,i) => s + i.aCDespachar, 0);
-  const fechaFmt = fecha ? new Date(fecha+'T00:00:00').toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
-
-  document.getElementById('previewContent').innerHTML = `
-    <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
-      <!-- Header guía -->
-      <div style="background:var(--surface2);padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;border-bottom:1px solid var(--border)">
-        <div><div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px">N° GUÍA</div><div style="font-size:15px;font-weight:600;font-family:var(--mono);color:var(--accent2)">${guiaNum}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px">ORDEN</div><div style="font-size:13px;font-weight:500">${o.numero}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);font-family:var(--mono);margin-bottom:3px">TIPO</div><span class="badge ${nroEnt==='1RA ENTREGA'?'b-pend':'b-part'}">${nroEnt}</span></div>
+  dc.innerHTML = `
+    <div class="detail-header">
+      <div class="dh-top">
+        <div>
+          <div class="dh-ord">${o.numero}</div>
+          <div class="dh-client">${o.cliente}</div>
+          ${o.destinatario ? `<div class="dh-dest">→ ${o.destinatario}</div>` : ''}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span class="badge ${stClass(o.estado)}" style="font-size:11px;padding:4px 10px">${stLabel(o.estado)}</span>
+          <button onclick="imprimirSeguimiento('${o.numero}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:12px;font-family:var(--font);cursor:pointer">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="1" width="10" height="14" rx="1"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
+            PDF
+          </button>
+          ${o.estado !== 'CANCELADO' ? `<button onclick="pedirAnularOrden('${o.numero}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--red);background:var(--red-dim);color:var(--red);font-size:12px;font-family:var(--font);cursor:pointer">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+            Anular orden
+          </button>` : ''}
+        </div>
       </div>
-      <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px;border-bottom:1px solid var(--border)">
-        <div style="font-size:12px"><span style="color:var(--text3)">Cliente: </span><strong>${o.cliente}${o.destinatario?' → '+o.destinatario:''}</strong></div>
-        <div style="font-size:12px"><span style="color:var(--text3)">Empresa: </span><strong>${o.empresa}</strong></div>
-        <div style="font-size:12px"><span style="color:var(--text3)">Transportista: </span><strong>${transp}</strong></div>
-        <div style="font-size:12px"><span style="color:var(--text3)">Placa: </span><strong style="font-family:var(--mono)">${placa}</strong></div>
-        <div style="font-size:12px"><span style="color:var(--text3)">Fecha despacho: </span><strong>${fechaFmt}</strong></div>
-        <div style="font-size:12px"><span style="color:var(--text3)">Entrega comprometida: </span><strong>${o.fechaEntrega||'—'}</strong></div>
-        ${obs?`<div style="font-size:12px;grid-column:1/-1"><span style="color:var(--text3)">Obs: </span>${obs}</div>`:''}
+      <div class="dh-stats">
+        <div class="dh-stat"><div class="val">${totalItems}</div><div class="lab">Ítems</div></div>
+        <div class="dh-stat"><div class="val" style="color:var(--blue)">${totalEnv.toLocaleString()}</div><div class="lab">Despachado</div></div>
+        <div class="dh-stat"><div class="val" style="color:${totalPend > 0 ? 'var(--yellow)' : 'var(--green)'}">${totalPend.toLocaleString()}</div><div class="lab">Pendiente</div></div>
+        <div class="dh-stat"><div class="val">${pct}%</div><div class="lab">Avance</div></div>
       </div>
-      <!-- Items -->
-      <table style="width:100%;border-collapse:collapse">
+      <div style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px"><span>Progreso total</span><span style="font-family:var(--mono)">${pct}%</span></div>
+        <div style="background:var(--surface3);border-radius:4px;height:7px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:${o.estado==='ENTREGADO'?'var(--green)':'var(--accent)'};border-radius:4px;transition:width .4s"></div>
+        </div>
+      </div>
+      <div class="dh-info">
+        <div class="info-row"><span class="info-label">Empresa</span><span class="info-val">${o.empresa}</span></div>
+        <div class="info-row"><span class="info-label">Origen</span><span class="info-val">${o.origen || '—'}</span></div>
+        <div class="info-row"><span class="info-label">Fecha orden</span><span class="info-val">${o.fechaOrden || '—'}</span></div>
+        <div class="info-row"><span class="info-label">Fecha entrega</span><span class="info-val">${o.fechaEntrega || '—'}</span></div>
+        ${o.notas ? `<div class="info-row" style="grid-column:1/-1"><span class="info-label">Notas</span><span class="info-val">${o.notas}</span></div>` : ''}
+      </div>
+    </div>
+
+    <div class="tl-card">
+      <div class="card-title">Línea de tiempo</div>
+      <div class="tl">${stages}</div>
+    </div>
+
+    <div class="items-card">
+      <div class="card-title">Ítems de la orden — ${totalItems} total</div>
+      <table class="items-table">
         <thead>
-          <tr style="background:var(--surface2)">
-            <th style="padding:8px 12px;text-align:left;font-size:10px;color:var(--text3);font-family:var(--mono);font-weight:500;border-bottom:1px solid var(--border)">#</th>
-            <th style="padding:8px 12px;text-align:left;font-size:10px;color:var(--text3);font-family:var(--mono);font-weight:500;border-bottom:1px solid var(--border)">CÓDIGO</th>
-            <th style="padding:8px 12px;text-align:left;font-size:10px;color:var(--text3);font-family:var(--mono);font-weight:500;border-bottom:1px solid var(--border)">DESCRIPCIÓN</th>
-            <th style="padding:8px 12px;text-align:right;font-size:10px;color:var(--text3);font-family:var(--mono);font-weight:500;border-bottom:1px solid var(--border)">PEDIDO</th>
-            <th style="padding:8px 12px;text-align:right;font-size:10px;color:var(--text3);font-family:var(--mono);font-weight:500;border-bottom:1px solid var(--border)">A DESPACHAR</th>
+          <tr>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th style="text-align:right">Pedido</th>
+            <th style="text-align:right">1ra Entrega</th>
+            <th style="text-align:right">2da Entrega</th>
+            <th style="text-align:right">Pendiente</th>
+            <th>Avance</th>
+            <th>Estado</th>
           </tr>
         </thead>
-        <tbody>
-          ${items.map((item,i) => `
-          <tr style="${i%2===0?'background:var(--surface2)':''}">
-            <td style="padding:8px 12px;font-size:12px;color:var(--text3);font-family:var(--mono)">${i+1}</td>
-            <td style="padding:8px 12px;font-size:11px;font-family:var(--mono);color:var(--accent2)">${item.codigo}</td>
-            <td style="padding:8px 12px;font-size:12px">${item.descripcion||'—'}</td>
-            <td style="padding:8px 12px;font-size:12px;text-align:right;font-family:var(--mono)">${item.cantidad.toLocaleString()}</td>
-            <td style="padding:8px 12px;font-size:12px;text-align:right;font-family:var(--mono);color:var(--green);font-weight:600">${item.aCDespachar.toLocaleString()}</td>
-          </tr>`).join('')}
-        </tbody>
-        <tfoot>
-          <tr style="background:var(--surface2);border-top:1px solid var(--border)">
-            <td colspan="4" style="padding:10px 12px;font-size:12px;font-weight:500;text-align:right">Total unidades a despachar:</td>
-            <td style="padding:10px 12px;font-size:14px;font-weight:600;text-align:right;font-family:var(--mono);color:var(--green)">${totalU.toLocaleString()}</td>
-          </tr>
-        </tfoot>
+        <tbody>${itemsRows}</tbody>
       </table>
-    </div>`;
+    </div>
+  `;
 }
 
-// ── GUARDAR Y GENERAR PDF ─────────────────────────────────
-async function generarGuia() {
-  const o = ordenSeleccionada;
-  const items = getItemsSeleccionados();
-  const transp   = document.getElementById('transportista').value.trim();
-  const placa    = document.getElementById('placa').value.trim().toUpperCase();
-  const fecha    = document.getElementById('fechaDespacho').value;
-  const nroEnt   = document.getElementById('nroEntrega').value;
-  const obs      = document.getElementById('obsDespacho').value;
-  const fechaFmt = fecha ? new Date(fecha+'T00:00:00').toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}) : '';
+function buildTimeline(o, items, env1, env2, sinStock) {
+  const stages = [];
 
-  showToast('Guardando guía...', 'loading');
+  // 1. Orden recibida
+  stages.push({
+    dot: 'dot-done',
+    title: 'Orden recibida',
+    desc: `${items.length} ítems registrados · Origen: ${o.origen || '—'}`,
+    time: o.fechaOrden,
+    chip: 'ok', chipTxt: 'Registrado'
+  });
 
-  const payload = {
-    accion: 'nuevaGuia',
-    guia: { numero: guiaNum, orden: o.numero, cliente: o.cliente+( o.destinatario?' → '+o.destinatario:''), nroEntrega: nroEnt, fechaDespacho: fechaFmt, transportista: transp, placa, observaciones: obs },
-    items: items.map(i => ({ orden: o.numero, codigo: i.codigo, nroEntrega: nroEnt, cantidad: i.aCDespachar }))
-  };
-
-  try {
-    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-    showToast('✓ Guía guardada', 'success');
-    setTimeout(() => imprimirGuia(), 500);
-  } catch(e) {
-    showToast('Error al guardar', 'error');
+  // 2. Sin stock
+  if (sinStock > 0) {
+    stages.push({
+      dot: 'dot-alert',
+      title: 'Ítems sin stock detectados',
+      desc: `${sinStock} ítem${sinStock > 1 ? 's' : ''} requieren fabricación`,
+      time: o.fechaOrden,
+      chip: 'err', chipTxt: 'Sin stock'
+    });
   }
-}
 
-function imprimirGuia() {
-  const o = ordenSeleccionada;
-  const items = getItemsSeleccionados();
-  const transp      = document.getElementById('transportista').value.trim();
-  const placa       = document.getElementById('placa').value.trim().toUpperCase();
-  const fecha       = document.getElementById('fechaDespacho').value;
-  const nroEnt      = document.getElementById('nroEntrega').value;
-  const obs         = document.getElementById('obsDespacho').value;
-  const despachador = document.getElementById('despachador').value.trim();
-  const fechaFmt    = fecha ? new Date(fecha+'T00:00:00').toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}) : '—';
-  const totalU      = items.reduce((s,i) => s + i.aCDespachar, 0);
-  const hoy         = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
-
-  const win = window.open('','_blank');
-  const p = [];
-  p.push('<!DOCTYPE html><html><head><meta charset="UTF-8">');
-  p.push('<title>Guia ' + guiaNum + '</title>');
-  p.push('<style>');
-  p.push('*{box-sizing:border-box;margin:0;padding:0}');
-  p.push('body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}');
-  p.push('.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}');
-  p.push('.empresa{font-size:18px;font-weight:700}.empresa-sub{font-size:11px;color:#555;margin-top:3px}');
-  p.push('.guia-num{font-size:20px;font-weight:700}.guia-tipo{font-size:12px;background:#e8e4ff;color:#3a2fa0;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:4px}');
-  p.push('.section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;padding:12px;background:#f7f7f7;border-radius:4px;border:1px solid #e0e0e0}');
-  p.push('.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#333;grid-column:1/-1;margin-bottom:4px;padding-bottom:6px;border-bottom:1px solid #ddd}');
-  p.push('.field .lbl{color:#666;font-size:10px;text-transform:uppercase;letter-spacing:.3px}.field .val{font-weight:600;margin-top:2px;font-size:13px}.field .val.highlight{color:#2c1fa0;font-size:14px}');
-  p.push('table{width:100%;border-collapse:collapse;margin-bottom:16px}');
-  p.push('th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:11px}th.r{text-align:right}');
-  p.push('td{padding:8px 10px;border-bottom:1px solid #ddd;font-size:12px}td.r{text-align:right;font-family:monospace}');
-  p.push('tr:nth-child(even) td{background:#f9f9f9}.total-row td{background:#111;color:#fff;font-weight:700;font-size:13px}.total-row td.r{font-size:15px}');
-  p.push('.footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:30px;padding-top:16px;border-top:1px solid #ccc}');
-  p.push('.firma-box{text-align:center}.firma-prefill{font-size:13px;font-weight:600;margin-bottom:6px;min-height:20px}.firma-line{border-top:1px solid #333;margin-top:36px;padding-top:6px;font-size:11px;color:#555}');
-  p.push('@media print{body{padding:10px}}');
-  p.push('</style></head><body>');
-  p.push('<div class="header"><div><div class="empresa">' + o.empresa + '</div><div class="empresa-sub">Guia de Remision — Documento interno</div></div>');
-  p.push('<div style="text-align:right"><div class="guia-num">' + guiaNum + '</div><div style="font-size:11px;color:#555;margin-top:4px">Emitida: ' + hoy + '</div><div class="guia-tipo">' + nroEnt + '</div></div></div>');
-  p.push('<div class="section"><div class="section-title">Datos del destinatario</div>');
-  p.push('<div class="field"><div class="lbl">Cliente</div><div class="val highlight">' + o.cliente + '</div></div>');
-  p.push(o.destinatario ? '<div class="field"><div class="lbl">Sede / Destinatario</div><div class="val highlight">' + o.destinatario + '</div></div>' : '<div></div>');
-  p.push('<div class="field"><div class="lbl">Empresa</div><div class="val">' + o.empresa + '</div></div>');
-  p.push('<div class="field"><div class="lbl">N Orden</div><div class="val highlight">' + o.numero + '</div></div>');
-  p.push('<div class="field"><div class="lbl">Entrega comprometida</div><div class="val">' + (o.fechaEntrega||'—') + '</div></div>');
-  p.push('<div class="field"><div class="lbl">Fecha despacho</div><div class="val">' + fechaFmt + '</div></div></div>');
-  p.push('<div class="section"><div class="section-title">Datos del transporte</div>');
-  p.push('<div class="field"><div class="lbl">Transportista</div><div class="val">' + transp + '</div></div>');
-  p.push('<div class="field"><div class="lbl">Placa</div><div class="val">' + placa + '</div></div>');
-  p.push('<div class="field"><div class="lbl">Despachado por</div><div class="val">' + (despachador||'___________________') + '</div></div>');
-  p.push(obs ? '<div class="field" style="grid-column:1/-1"><div class="lbl">Observaciones</div><div class="val">' + obs + '</div></div>' : '');
-  p.push('</div>');
-  p.push('<table><thead><tr><th>#</th><th>Codigo</th><th>Descripcion</th><th class="r">Cant. pedida</th><th class="r">A despachar</th></tr></thead><tbody>');
-  items.forEach(function(item, i) {
-    p.push('<tr><td>' + (i+1) + '</td><td style="font-family:monospace;font-size:11px">' + item.codigo + '</td><td>' + (item.descripcion||'—') + '</td><td class="r">' + item.cantidad.toLocaleString() + '</td><td class="r"><strong>' + item.aCDespachar.toLocaleString() + '</strong></td></tr>');
+  // 3. Primera entrega
+  const has1 = env1 > 0;
+  stages.push({
+    dot: has1 ? 'dot-done' : 'dot-pend',
+    title: '1ra entrega / despacho',
+    desc: has1 ? `${env1.toLocaleString()} unidades despachadas` : 'Pendiente',
+    time: has1 ? (o.entrega1 || '—') : 'Pendiente',
+    chip: has1 ? 'info' : '', chipTxt: has1 ? 'Parcial enviado' : ''
   });
-  p.push('</tbody><tfoot><tr class="total-row"><td colspan="4" style="text-align:right">TOTAL UNIDADES A DESPACHAR:</td><td class="r">' + totalU.toLocaleString() + '</td></tr></tfoot></table>');
-  p.push('<div class="footer">');
-  p.push('<div class="firma-box"><div class="firma-prefill">' + (despachador||'') + '</div><div class="firma-line">Despachado por</div></div>');
-  p.push('<div class="firma-box"><div class="firma-prefill"></div><div class="firma-line">Verificado por</div></div>');
-  p.push('<div class="firma-box"><div class="firma-prefill"></div><div class="firma-line">Recibido por (cliente)</div></div>');
-  p.push('</div>');
-  p.push('<script>window.onload=function(){window.print()}<\/script>');
-  p.push('</body></html>');
-  win.document.write(p.join(''));
-  win.document.close();
-}
 
-function imprimirOrdenCompleta() {
-  const o = ordenSeleccionada;
-  const items = itemsPorOrden[o.numero] || [];
-  const hoy = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
-  const totalU = items.reduce((s,i) => s + i.cantidad, 0);
+  // 4. Segunda entrega
+  const has2 = env2 > 0;
+  const need2 = items.some(i => i.cantidad > i.env1);
+  if (has2 || need2) {
+    stages.push({
+      dot: has2 ? 'dot-done' : 'dot-pend',
+      title: '2da entrega / despacho',
+      desc: has2 ? `${env2.toLocaleString()} unidades despachadas` : 'Pendiente — esperando stock o fabricación',
+      time: has2 ? '—' : 'Pendiente',
+      chip: has2 ? 'ok' : '', chipTxt: 'Completado'
+    });
+  }
 
-  const win = window.open('','_blank');
-  const p = [];
-  p.push('<!DOCTYPE html><html><head><meta charset="UTF-8">');
-  p.push('<title>Orden ' + o.numero + '</title>');
-  p.push('<style>');
-  p.push('*{box-sizing:border-box;margin:0;padding:0}');
-  p.push('body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}');
-  p.push('.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:16px}');
-  p.push('.empresa{font-size:18px;font-weight:700}.ord-num{font-size:20px;font-weight:700}');
-  p.push('.section{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}');
-  p.push('.field .lbl{color:#666;font-size:10px;text-transform:uppercase}.field .val{font-weight:600;margin-top:2px}');
-  p.push('table{width:100%;border-collapse:collapse;margin-bottom:16px}');
-  p.push('th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:11px}th.r{text-align:right}');
-  p.push('td{padding:8px 10px;border-bottom:1px solid #ddd;font-size:12px}td.r{text-align:right;font-family:monospace}');
-  p.push('tr:nth-child(even) td{background:#f9f9f9}.total-row td{background:#111;color:#fff;font-weight:700}');
-  p.push('@media print{body{padding:10px}}');
-  p.push('</style></head><body>');
-  p.push('<div class="header"><div><div class="empresa">' + o.empresa + '</div><div style="font-size:11px;color:#555;margin-top:3px">Orden de preparacion — Documento interno</div></div>');
-  p.push('<div style="text-align:right"><div class="ord-num">' + o.numero + '</div><div style="font-size:11px;color:#555;margin-top:4px">Impreso: ' + hoy + '</div></div></div>');
-  p.push('<div class="section">');
-  p.push('<div class="field"><div class="lbl">Cliente</div><div class="val">' + o.cliente + (o.destinatario?' → '+o.destinatario:'') + '</div></div>');
-  p.push('<div class="field"><div class="lbl">Empresa</div><div class="val">' + o.empresa + '</div></div>');
-  p.push('<div class="field"><div class="lbl">Fecha orden</div><div class="val">' + (o.fechaOrden||'—') + '</div></div>');
-  p.push('<div class="field"><div class="lbl">Fecha entrega</div><div class="val">' + (o.fechaEntrega||'—') + '</div></div>');
-  p.push(o.notas ? '<div class="field" style="grid-column:1/-1"><div class="lbl">Notas</div><div class="val">' + o.notas + '</div></div>' : '');
-  p.push('</div>');
-  p.push('<table><thead><tr><th>#</th><th>Codigo</th><th>Descripcion</th><th class="r">Cantidad pedida</th><th class="r">1ra entrega</th><th class="r">2da entrega</th><th class="r">Pendiente</th></tr></thead><tbody>');
-  items.forEach(function(item, i) {
-    const pend = item.cantidad - item.env1 - item.env2;
-    p.push('<tr><td>' + (i+1) + '</td><td style="font-family:monospace">' + item.codigo + '</td><td>' + (item.descripcion||'—') + '</td><td class="r">' + item.cantidad.toLocaleString() + '</td><td class="r">' + item.env1.toLocaleString() + '</td><td class="r">' + item.env2.toLocaleString() + '</td><td class="r"><strong>' + pend.toLocaleString() + '</strong></td></tr>');
+  // 5. Entrega final
+  const isDone = o.estado === 'ENTREGADO';
+  stages.push({
+    dot: isDone ? 'dot-done' : 'dot-pend',
+    title: 'Entrega final confirmada',
+    desc: isDone ? 'Orden completada' : `Fecha comprometida: ${o.fechaEntrega || '—'}`,
+    time: isDone ? o.fechaEntrega : 'Pendiente',
+    chip: isDone ? 'ok' : '', chipTxt: 'Entregado'
   });
-  const totEnv1 = items.reduce((s,i)=>s+i.env1,0);
-  const totEnv2 = items.reduce((s,i)=>s+i.env2,0);
-  const totPend = items.reduce((s,i)=>s+(i.cantidad-i.env1-i.env2),0);
-  p.push('</tbody><tfoot><tr class="total-row"><td colspan="3" style="text-align:right">TOTAL:</td><td class="r">' + totalU.toLocaleString() + '</td><td class="r">' + totEnv1.toLocaleString() + '</td><td class="r">' + totEnv2.toLocaleString() + '</td><td class="r">' + totPend.toLocaleString() + '</td></tr></tfoot></table>');
-  p.push('<script>window.onload=function(){window.print()}<\/script>');
-  p.push('</body></html>');
-  win.document.write(p.join(''));
-  win.document.close();
+
+  return stages.map((s, i) => {
+    const isLast = i === stages.length - 1;
+    const chipHtml = s.chip ? `<span class="tl-chip chip-${s.chip}">${s.chipTxt}</span>` : '';
+    const activeStyle = s.dot === 'dot-pend' ? 'color:var(--text3)' : '';
+    return `<div class="tl-row">
+      <div class="tl-left">
+        <div class="tl-dot ${s.dot}"></div>
+        ${!isLast ? '<div class="tl-line"></div>' : ''}
+      </div>
+      <div class="tl-body">
+        <div class="tl-stage" style="${activeStyle}">${s.title}</div>
+        <div class="tl-desc" style="${activeStyle}">${s.desc}</div>
+        <div class="tl-time">${s.time}</div>
+        ${chipHtml}
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function pedirCerrarOrden() {
-  if (!ordenSeleccionada) return;
-  const conf1 = confirm(`¿Cerrar la orden ${ordenSeleccionada.numero} de ${ordenSeleccionada.cliente}?\n\nSe marcará como CANCELADO y no aparecerá en despachos pendientes.`);
+// ─── HELPERS ──────────────────────────────────────────────
+function stLabel(st) {
+  return { 'PENDIENTE':'Pendiente','PARCIAL ENVIADO':'Parcial enviado','ENTREGADO':'Entregado','CANCELADO':'Cancelado' }[st] || st;
+}
+function stClass(st) {
+  return { 'PENDIENTE':'b-pend','PARCIAL ENVIADO':'b-part','ENTREGADO':'b-done','CANCELADO':'b-cancel' }[st] || 'b-pend';
+}
+function itemStClass(st) {
+  return { 'PENDIENTE':'b-pend','PARCIAL':'b-part','COMPLETADO':'b-done','SIN STOCK':'b-tick' }[st] || 'b-pend';
+}
+
+function pedirAnularOrden(num) {
+  const o = ordenes.find(x => x.numero === num);
+  if (!o) return;
+  // Double confirmation
+  const conf1 = confirm(`¿Seguro que quieres anular la orden ${num} de ${o.cliente}?\n\nEsta acción marcará la orden como CANCELADO.`);
   if (!conf1) return;
-  const conf2 = confirm(`Confirmación final: ¿Cerrar definitivamente la orden ${ordenSeleccionada.numero}?`);
+  const conf2 = confirm(`Confirmación final: ¿Anular definitivamente la orden ${num}?`);
   if (!conf2) return;
-  cerrarOrden();
+  anularOrden(num);
 }
 
-async function cerrarOrden() {
-  showToast('Cerrando orden...', 'loading');
+async function anularOrden(num) {
+  showToast('Anulando orden...', 'loading');
   try {
     await fetch(SCRIPT_URL, {
       method: 'POST',
-      body: JSON.stringify({ accion: 'actualizarEstadoOrden', numero: ordenSeleccionada.numero, estado: 'CANCELADO' })
+      body: JSON.stringify({ accion: 'actualizarEstadoOrden', numero: num, estado: 'CANCELADO' })
     });
-    showToast(`✓ Orden ${ordenSeleccionada.numero} cerrada`, 'success');
-    setTimeout(() => { ordenSeleccionada = null; irPaso1(); cargarDatos(); }, 1000);
+    showToast(`✓ Orden ${num} anulada`, 'success');
+    // Update local state
+    const o = ordenes.find(x => x.numero === num);
+    if (o) o.estado = 'CANCELADO';
+    setTimeout(() => { filtrar(); seleccionarOrden(num); }, 800);
   } catch(e) {
-    showToast('Error al cerrar orden', 'error');
+    showToast('Error al anular', 'error');
   }
 }
 
-// ── STEPS ─────────────────────────────────────────────────
-function setStep(n) {
-  [1,2,3,4].forEach(i => {
-    const el = document.getElementById(`step${i}`);
-    el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
-    if (i < n) el.querySelector('.step-num').textContent = '✓';
-    else el.querySelector('.step-num').textContent = i;
-  });
-}
+function imprimirSeguimiento(num) {
+  const o = ordenes.find(x => x.numero === num);
+  if (!o) return;
+  const items = itemsPorOrden[num] || [];
+  const totalCant = items.reduce((s,i) => s + i.cantidad, 0);
+  const totalEnv1 = items.reduce((s,i) => s + i.env1, 0);
+  const totalEnv2 = items.reduce((s,i) => s + i.env2, 0);
+  const totalEnv  = totalEnv1 + totalEnv2;
+  const totalPend = totalCant - totalEnv;
+  const pct       = totalCant > 0 ? Math.round(totalEnv / totalCant * 100) : 0;
+  const hoy       = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
 
-function irPaso1() {
-  setStep(1);
-  document.getElementById('paso2').style.display = 'none';
-  document.getElementById('paso1').style.display = 'block';
+  const win = window.open('','_blank');
+  const htmlParts = [];
+  htmlParts.push('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  htmlParts.push('<title>Seguimiento ' + o.numero + '</title>');
+  htmlParts.push('<style>');
+  htmlParts.push('*{box-sizing:border-box;margin:0;padding:0}');
+  htmlParts.push('body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}');
+  htmlParts.push('.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}');
+  htmlParts.push('.empresa{font-size:18px;font-weight:700}');
+  htmlParts.push('.empresa-sub{font-size:11px;color:#555;margin-top:3px}');
+  htmlParts.push('.ord-num{font-size:20px;font-weight:700;font-family:monospace}');
+  htmlParts.push('.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}');
+  htmlParts.push('.b-pend{background:#FFF3CD;color:#856404}.b-part{background:#CCE5FF;color:#004085}.b-done{background:#D4EDDA;color:#155724}');
+  htmlParts.push('.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}');
+  htmlParts.push('.field .lbl{font-size:10px;color:#666;text-transform:uppercase;letter-spacing:.3px}');
+  htmlParts.push('.field .val{font-weight:600;margin-top:2px;font-size:13px}');
+  htmlParts.push('.prog-section{margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}');
+  htmlParts.push('.prog-label{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:5px}');
+  htmlParts.push('.prog-bar{background:#ddd;border-radius:4px;height:10px;overflow:hidden}');
+  htmlParts.push('.prog-fill{height:100%;border-radius:4px}');
+  htmlParts.push('.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}');
+  htmlParts.push('.stat{text-align:center;padding:8px;background:#f7f7f7;border-radius:4px}');
+  htmlParts.push('.stat .v{font-size:20px;font-weight:700;font-family:monospace}');
+  htmlParts.push('.stat .l{font-size:10px;color:#666;text-transform:uppercase;margin-top:2px}');
+  htmlParts.push('table{width:100%;border-collapse:collapse;margin-bottom:16px}');
+  htmlParts.push('th{background:#111;color:#fff;padding:7px 10px;text-align:left;font-size:11px}');
+  htmlParts.push('th.r{text-align:right}td{padding:7px 10px;border-bottom:1px solid #ddd;font-size:12px}');
+  htmlParts.push('td.r{text-align:right;font-family:monospace}td.code{font-family:monospace;font-size:11px;color:#444}');
+  htmlParts.push('tr:nth-child(even) td{background:#f9f9f9}');
+  htmlParts.push('.tfoot-row td{background:#f0f0f0;font-weight:700;border-top:2px solid #111}');
+  htmlParts.push('.footer{margin-top:20px;padding-top:12px;border-top:1px solid #ccc;font-size:10px;color:#888;text-align:center}');
+  htmlParts.push('@media print{body{padding:10px}}');
+  htmlParts.push('</style></head><body>');
+
+  // Header
+  const badgeClass = o.estado === 'ENTREGADO' ? 'b-done' : o.estado === 'PARCIAL ENVIADO' ? 'b-part' : 'b-pend';
+  htmlParts.push('<div class="header"><div><div class="empresa">' + o.empresa + '</div><div class="empresa-sub">Reporte de seguimiento de orden — Documento interno</div></div>');
+  htmlParts.push('<div style="text-align:right"><div class="ord-num">' + o.numero + '</div><div style="margin-top:6px"><span class="badge ' + badgeClass + '">' + o.estado + '</span></div></div></div>');
+
+  // Info grid
+  htmlParts.push('<div class="info-grid">');
+  htmlParts.push('<div class="field"><div class="lbl">Cliente</div><div class="val">' + o.cliente + (o.destinatario ? ' → ' + o.destinatario : '') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Fecha de orden</div><div class="val">' + (o.fechaOrden||'—') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Fecha de entrega</div><div class="val">' + (o.fechaEntrega||'—') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Empresa</div><div class="val">' + o.empresa + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Origen</div><div class="val">' + (o.origen||'—') + '</div></div>');
+  htmlParts.push('<div class="field"><div class="lbl">Impreso el</div><div class="val">' + hoy + '</div></div>');
+  if (o.notas) htmlParts.push('<div class="field" style="grid-column:1/-1"><div class="lbl">Notas</div><div class="val">' + o.notas + '</div></div>');
+  htmlParts.push('</div>');
+
+  // Stats
+  htmlParts.push('<div class="stats-row">');
+  htmlParts.push('<div class="stat"><div class="v">' + items.length + '</div><div class="l">Ítems totales</div></div>');
+  htmlParts.push('<div class="stat"><div class="v" style="color:#0056b3">' + totalEnv.toLocaleString() + '</div><div class="l">Despachado</div></div>');
+  htmlParts.push('<div class="stat"><div class="v" style="color:' + (totalPend>0?'#856404':'#155724') + '">' + totalPend.toLocaleString() + '</div><div class="l">Pendiente</div></div>');
+  htmlParts.push('<div class="stat"><div class="v">' + pct + '%</div><div class="l">Avance</div></div>');
+  htmlParts.push('</div>');
+
+  // Progress bar
+  const progColor = o.estado === 'ENTREGADO' ? '#00b894' : '#6c5ce7';
+  htmlParts.push('<div class="prog-section"><div class="prog-label"><span>Progreso de entrega</span><span>' + pct + '%</span></div>');
+  htmlParts.push('<div class="prog-bar"><div class="prog-fill" style="width:' + pct + '%;background:' + progColor + '"></div></div></div>');
+
+  // Items table
+  htmlParts.push('<table><thead><tr><th>#</th><th>Código</th><th>Descripción</th><th class="r">Pedido</th><th class="r">1ra Entrega</th><th class="r">2da Entrega</th><th class="r">Pendiente</th><th class="r">Avance</th><th>Estado</th></tr></thead><tbody>');
+  items.forEach(function(item, i) {
+    const pend = item.cantidad - item.env1 - item.env2;
+    const pctI = item.cantidad > 0 ? Math.round((item.env1+item.env2)/item.cantidad*100) : 0;
+    htmlParts.push('<tr><td>' + (i+1) + '</td><td class="code">' + item.codigo + '</td><td>' + (item.descripcion||'—') + '</td><td class="r">' + item.cantidad.toLocaleString() + '</td><td class="r">' + item.env1.toLocaleString() + '</td><td class="r">' + item.env2.toLocaleString() + '</td><td class="r" style="color:' + (pend>0?'#856404':'#555') + '">' + pend.toLocaleString() + '</td><td class="r">' + pctI + '%</td><td>' + item.estado + '</td></tr>');
+  });
+  htmlParts.push('</tbody><tfoot><tr class="tfoot-row"><td colspan="3" style="text-align:right">TOTALES:</td><td class="r">' + totalCant.toLocaleString() + '</td><td class="r">' + totalEnv1.toLocaleString() + '</td><td class="r">' + totalEnv2.toLocaleString() + '</td><td class="r">' + totalPend.toLocaleString() + '</td><td class="r">' + pct + '%</td><td></td></tr></tfoot></table>');
+
+  // Footer
+  htmlParts.push('<div class="footer">GestiOrder — ' + o.empresa + ' · Generado el ' + hoy + ' · Documento de uso interno</div>');
+  htmlParts.push('<script>window.onload=function(){window.print()}<\/script>');
+  htmlParts.push('</body></html>');
+
+  win.document.write(htmlParts.join(''));
+  win.document.close();
 }
 
 let toastTimer;
-function showToast(msg, type='success') {
+function showToast(msg, type = 'success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = `toast ${type} show`;
