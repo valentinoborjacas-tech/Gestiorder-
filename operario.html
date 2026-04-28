@@ -4,18 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>GestiOrder — Operario</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f0f11; --surface: #17171a; --surface2: #1e1e22; --surface3: #26262c;
-  --border: #2e2e35; --border2: #3a3a44;
-  --accent: #6c5ce7; --accent2: #a29bfe; --accent-dim: rgba(108,92,231,0.15);
-  --green: #00b894; --green-dim: rgba(0,184,148,0.15);
-  --yellow: #fdcb6e; --yellow-dim: rgba(253,203,110,0.15);
-  --red: #e17055; --red-dim: rgba(225,112,85,0.15);
-  --text: #e8e8f0; --text2: #9090a8; --text3: #55556a;
-  --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
-  --radius: 12px; --radius-sm: 8px;
+  --bg:#F4F6FB;--surface:#FFFFFF;--surface2:#EEF1F8;--surface3:#E2E7F2;
+  --border:#D0D7E8;--border2:#B8C3DC;
+  --accent:#0036B3;--accent2:#0044DD;--accent-dim:rgba(0,54,179,0.08);
+  --green:#3DA800;--green2:#5DCD00;--green-dim:rgba(93,205,0,0.12);--green-text:#2A7500;
+  --yellow:#E08A00;--yellow-dim:rgba(224,138,0,0.10);
+  --red:#D0310A;--red-dim:rgba(208,49,10,0.10);
+  --blue-light:#E8EEFA;
+  --text:#1A1F36;--text2:#575756;--text3:#8A92A8;
+  --font:'Poppins',sans-serif;--mono:'DM Mono',monospace;
+  --radius:10px;--radius-sm:6px;
+  --shadow:0 1px 4px rgba(0,36,120,0.08),0 0 0 1px rgba(0,36,120,0.04);
+  --shadow-md:0 4px 16px rgba(0,36,120,0.12),0 0 0 1px rgba(0,36,120,0.06);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 15px; min-height: 100vh; }
@@ -146,7 +149,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 
 <script>
 const SHEET_ID   = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby583PyhVZAaTU2-IpxtIzBlejGkweMLpbWNzU6FMca0oAKEEXTMb-Tcimf7FDjpIb8GA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9NRV2FcnD2i3y1xrPx84eiCie23HZjVqoRN01fydfkjM_pgZmxRAqqN73m7aNkVCphw/exec';
 
 let operarioActual = '';
 let tickets = [];
