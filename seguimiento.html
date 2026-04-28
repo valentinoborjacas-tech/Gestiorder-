@@ -168,9 +168,16 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 </style>
 </head>
 <body>
+<script src="auth.js"></script>
 <div class="app">
   <div class="sidebar">
     <div class="logo"><div class="logo-name">GestiOrder</div><div class="logo-sub">v1.0</div></div>
+    <div style="padding:10px 16px;border-bottom:1px solid var(--border);margin-bottom:8px">
+      <div style="font-size:11px;color:var(--text3);margin-bottom:3px">Sesión activa</div>
+      <div id="sidebarUser" style="font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+      <button onclick="cerrarSesion()" style="margin-top:6px;background:transparent;border:none;color:var(--text3);font-size:11px;cursor:pointer;padding:0;font-family:var(--font)">Cerrar sesión →</button>
+    </div>
+
     <div class="nav-section">Operaciones</div>
     <a class="nav-item" href="index.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="6" x2="11" y2="6"/><line x1="5" y1="9" x2="9" y2="9"/></svg>Nueva Orden</a>
     <a class="nav-item active" href="seguimiento.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>Seguimiento</a>
@@ -223,7 +230,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 
 <script>
 const SHEET_ID = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxJYY_pNFkESQvdAtjHkh6w4CBnwnwAtR-bFj3B13DZoBqARoZyigkM0T5mIZbkIN4J8g/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9NRV2FcnD2i3y1xrPx84eiCie23HZjVqoRN01fydfkjM_pgZmxRAqqN73m7aNkVCphw/exec';
 
 let ordenes = [];
 let itemsPorOrden = {};
@@ -293,18 +300,7 @@ function parseGviz(raw) {
   try {
     const json = JSON.parse(raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
     return (json.table.rows || []).map(row =>
-      (json.table.cols || []).map((col, i) => {
-        const cell = row.c[i];
-        if (!cell || cell.v === null) return '';
-        if (col.type === 'date' || col.type === 'datetime') {
-          const m = String(cell.v).match(/Date\((\d+),(\d+),(\d+)/);
-          if (m) {
-            const d = new Date(+m[1], +m[2], +m[3]);
-            return d.toLocaleDateString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric'});
-          }
-        }
-        return String(cell.v);
-      })
+      (json.table.cols || []).map((_, i) => row.c[i] ? (row.c[i].v !== null ? String(row.c[i].v) : '') : '')
     );
   } catch(e) { return []; }
 }
@@ -643,6 +639,7 @@ function imprimirSeguimiento(num) {
     .footer{margin-top:20px;padding-top:12px;border-top:1px solid #ccc;font-size:10px;color:#888;text-align:center}
     @media print{body{padding:10px}}
   </style></head><body>
+<script src="auth.js"></script>
   <div class="header">
     <div>
       <div class="empresa">${o.empresa}</div>
