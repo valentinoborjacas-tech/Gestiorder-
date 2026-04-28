@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GestiOrder — Tickets de Fabricación</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f11; --surface: #17171a; --surface2: #1e1e22; --surface3: #26262c;
+  --border: #2e2e35; --border2: #3a3a44;
+  --accent: #6c5ce7; --accent2: #a29bfe; --accent-dim: rgba(108,92,231,0.15);
+  --green: #00b894; --green-dim: rgba(0,184,148,0.12);
+  --yellow: #fdcb6e; --yellow-dim: rgba(253,203,110,0.12);
+  --red: #e17055; --red-dim: rgba(225,112,85,0.12);
+  --blue: #74b9ff; --blue-dim: rgba(116,185,255,0.12);
+  --text: #e8e8f0; --text2: #9090a8; --text3: #55556a;
+  --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+  --radius: 10px; --radius-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; min-height: 100vh; }
+.app { display: block; min-height: 100vh; }
+
+
+.logo-name { font-size: 15px; font-weight: 600; }
+.logo-sub { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+.nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 16px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all .15s; border-left: 2px solid transparent; }
+.nav-item:hover { color: var(--text); background: var(--surface2); }
+.nav-item.active { color: var(--accent2); border-left-color: var(--accent); background: var(--accent-dim); }
+.nav-icon { width: 15px; height: 15px; opacity: .7; }
+.nav-section { font-size: 10px; color: var(--text3); padding: 12px 16px 4px; text-transform: uppercase; letter-spacing: .8px; font-family: var(--mono); }
+.main { width: 100%; overflow-y: auto; }
+.topbar { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: var(--surface); position: sticky; top: 0; z-index: 10; }
+.topbar-title { font-size: 15px; font-weight: 500; }
+.topbar-sub { font-size: 12px; color: var(--text3); margin-top: 1px; }
+.content { padding: 20px 24px; }
+
+/* BTN */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; font-family: var(--font); cursor: pointer; transition: all .15s; }
+.btn:hover { border-color: var(--border2); background: var(--surface3); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 500; }
+.btn-primary:hover { background: #5a4dd4; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text2); }
+.btn-ghost:hover { color: var(--text); background: var(--surface2); border-color: transparent; }
+
+/* BADGE */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 500; font-family: var(--mono); white-space: nowrap; }
+.b-pend { background: var(--yellow-dim); color: var(--yellow); }
+.b-proc { background: var(--blue-dim); color: var(--blue); }
+.b-done { background: var(--green-dim); color: var(--green); }
+.b-cancel { background: var(--surface3); color: var(--text3); }
+
+/* STATS */
+.stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.stat-val { font-size: 24px; font-weight: 600; font-family: var(--mono); }
+.stat-lab { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* FILTERS */
+.filters-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.search-input { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 12px; color: var(--text); font-family: var(--font); font-size: 13px; width: 220px; }
+.search-input:focus { outline: none; border-color: var(--accent); }
+.search-input::placeholder { color: var(--text3); }
+.pills { display: flex; gap: 6px; }
+.pill { padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; font-size: 11px; cursor: pointer; color: var(--text2); font-family: var(--mono); transition: all .15s; }
+.pill.on { background: var(--accent-dim); color: var(--accent2); border-color: var(--accent); }
+
+/* TICKET GRID */
+.ticket-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.ticket-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color .15s; }
+.ticket-card:hover { border-color: var(--border2); }
+.ticket-card.urgent { border-left: 3px solid var(--red); }
+.ticket-card.normal { border-left: 3px solid var(--yellow); }
+.ticket-card.done { border-left: 3px solid var(--green); opacity: .7; }
+.tk-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.tk-num { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+.tk-product { font-size: 14px; font-weight: 500; margin: 4px 0 8px; }
+.tk-meta { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text2); }
+.tk-meta span { display: flex; align-items: center; gap: 6px; }
+.tk-meta .icon { width: 12px; height: 12px; opacity: .5; flex-shrink: 0; }
+.tk-footer { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.urgency { font-size: 11px; font-weight: 500; font-family: var(--mono); }
+
+/* MODAL */
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.7); z-index: 100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.modal-bg.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 24px; width: 460px; max-width: 95vw; }
+.modal-title { font-size: 15px; font-weight: 500; margin-bottom: 18px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+label { font-size: 11px; color: var(--text2); font-weight: 500; }
+input, select { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; color: var(--text); font-family: var(--font); font-size: 13px; width: 100%; }
+input:focus, select:focus { outline: none; border-color: var(--accent); }
+input::placeholder { color: var(--text3); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+
+/* EMPTY */
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px; gap: 10px; color: var(--text3); text-align: center; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 12px 16px; font-size: 13px; z-index: 200; transform: translateY(80px); opacity: 0; transition: all .3s; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-left: 3px solid var(--green); }
+.toast.error { border-left: 3px solid var(--red); }
+.toast.loading { border-left: 3px solid var(--accent); }
+.spinner { width: 14px; height: 14px; border: 2px solid var(--border2); border-top-color: var(--accent2); border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.count-badge { background: var(--surface3); border-radius: 20px; padding: 2px 8px; font-size: 11px; color: var(--text2); font-family: var(--mono); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Tickets de fabricación</div>
+        <div class="topbar-sub">Gestiona los pedidos de producción por operario</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <a href="operario.html" target="_blank" class="btn btn-sm">Vista operario ↗</a>
+        <button class="btn btn-primary" onclick="abrirModal()">+ Nuevo ticket</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="stats" id="statsRow">
+        <div class="stat-card"><div class="stat-val" id="stTotal">—</div><div class="stat-lab">Total tickets</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--yellow)" id="stPend">—</div><div class="stat-lab">Pendientes</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--blue)" id="stProc">—</div><div class="stat-lab">En proceso</div></div>
+        <div class="stat-card"><div class="stat-val" style="color:var(--green)" id="stDone">—</div><div class="stat-lab">Completados</div></div>
+      </div>
+
+      <div class="filters-bar">
+        <input class="search-input" type="text" placeholder="Buscar código u orden..." id="searchInput" oninput="filtrar()">
+        <div class="pills" id="pillGroup">
+          <span class="pill on" data-st="all" onclick="setPill(this)">Todos</span>
+          <span class="pill" data-st="PENDIENTE" onclick="setPill(this)">Pendiente</span>
+          <span class="pill" data-st="EN PROCESO" onclick="setPill(this)">En proceso</span>
+          <span class="pill" data-st="COMPLETADO" onclick="setPill(this)">Completado</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-left:auto">
+          <select id="filtroOperario" onchange="filtrar()" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 10px;color:var(--text);font-size:12px;font-family:var(--font)">
+            <option value="">Todos los operarios</option>
+            <option>Operario 1</option>
+            <option>Operario 2</option>
+            <option>Operario 3</option>
+            <option>Operario 4</option>
+          </select>
+          <span class="count-badge" id="countBadge">— tickets</span>
+        </div>
+      </div>
+
+      <div class="ticket-grid" id="ticketGrid">
+        <div class="empty" style="grid-column:1/-1"><div class="spinner"></div><span>Cargando tickets...</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL NUEVO TICKET -->
+<div class="modal-bg" id="modalBg" onclick="cerrarModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Nuevo ticket de fabricación</div>
+    <div class="form-group">
+      <label>Código de producto *</label>
+      <input type="text" id="tk_codigo" placeholder="Ej: SA-ROJ-140-33">
+    </div>
+    <div class="form-group">
+      <label>N° Orden vinculada *</label>
+      <select id="tk_orden">
+        <option value="">Seleccionar orden...</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Operario (máquina) *</label>
+      <select id="tk_operario">
+        <option value="">Seleccionar...</option>
+        <option>Operario 1</option>
+        <option>Operario 2</option>
+        <option>Operario 3</option>
+        <option>Operario 4</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Fecha límite *</label>
+      <input type="date" id="tk_fecha">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarTicket()" id="btnGuardarTk">Crear ticket</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SHEET_ID   = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9NRV2FcnD2i3y1xrPx84eiCie23HZjVqoRN01fydfkjM_pgZmxRAqqN73m7aNkVCphw/exec';
+
+let tickets = [];
+let ordenes = [];
+let activeSt = 'all';
+
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('tk_fecha').value = new Date().toISOString().split('T')[0];
+  await cargarDatos();
+});
+
+async function cargarDatos() {
+  showToast('Cargando...', 'loading');
+  try {
+    const urlTk  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=TICKETS_FAB&range=A4:G500`;
+    const urlOrd = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDENES&range=A3:C500`;
+
+    const [rTk, rOrd] = await Promise.all([
+      fetch(urlTk).then(r => r.text()),
+      fetch(urlOrd).then(r => r.text())
+    ]);
+
+    tickets = parseGviz(rTk).filter(r => r[0]).map(r => ({
+      numero:    r[0]?.trim(),
+      codigo:    r[1]?.trim(),
+      descripcion: r[2]?.trim(),
+      orden:     r[3]?.trim(),
+      operario:  r[4]?.trim(),
+      fechaLim:  r[5]?.trim(),
+      estado:    r[6]?.trim() || 'PENDIENTE',
+    }));
+
+    ordenes = parseGviz(rOrd).filter(r => r[0]).map(r => ({
+      numero:  r[0]?.trim(),
+      cliente: r[2]?.trim(),
+    }));
+
+    poblarOrdenes();
+    filtrar();
+    showToast(`${tickets.length} tickets cargados`, 'success');
+  } catch(e) {
+    showToast('Error cargando datos', 'error');
+  }
+}
+
+function parseGviz(raw) {
+  try {
+    const json = JSON.parse(raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
+    return (json.table.rows || []).map(row =>
+      (json.table.cols || []).map((col, i) => {
+        const cell = row.c[i];
+        if (!cell || cell.v === null) return '';
+        if (col.type === 'date' || col.type === 'datetime') {
+          const m = String(cell.v).match(/Date\((\d+),(\d+),(\d+)/);
+          if (m) {
+            const d = new Date(+m[1], +m[2], +m[3]);
+            return d.toLocaleDateString('es-PE', {day:'2-digit', month:'2-digit', year:'numeric'});
+          }
+        }
+        return String(cell.v);
+      })
+    );
+  } catch(e) { return []; }
+}
+
+function poblarOrdenes() {
+  const sel = document.getElementById('tk_orden');
+  ordenes.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o.numero;
+    opt.textContent = `${o.numero} — ${o.cliente}`;
+    sel.appendChild(opt);
+  });
+}
+
+function filtrar() {
+  const q  = document.getElementById('searchInput').value.toLowerCase().trim();
+  const op = document.getElementById('filtroOperario').value;
+  const filtered = tickets.filter(t => {
+    if (activeSt !== 'all' && t.estado !== activeSt) return false;
+    if (op && t.operario !== op) return false;
+    if (q && !t.codigo?.toLowerCase().includes(q) && !t.orden?.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  renderTickets(filtered);
+  actualizarStats();
+  document.getElementById('countBadge').textContent = `${filtered.length} tickets`;
+}
+
+function setPill(el) {
+  document.querySelectorAll('#pillGroup .pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  activeSt = el.dataset.st;
+  filtrar();
+}
+
+function actualizarStats() {
+  document.getElementById('stTotal').textContent = tickets.length;
+  document.getElementById('stPend').textContent  = tickets.filter(t => t.estado === 'PENDIENTE').length;
+  document.getElementById('stProc').textContent  = tickets.filter(t => t.estado === 'EN PROCESO').length;
+  document.getElementById('stDone').textContent  = tickets.filter(t => t.estado === 'COMPLETADO').length;
+}
+
+function renderTickets(list) {
+  const grid = document.getElementById('ticketGrid');
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><span>Sin tickets</span></div>';
+    return;
+  }
+  grid.innerHTML = list.map(t => {
+    const urgencia = calcUrgencia(t.fechaLim);
+    const cardClass = t.estado === 'COMPLETADO' ? 'done' : urgencia.dias <= 1 ? 'urgent' : 'normal';
+    const badgeClass = { 'PENDIENTE':'b-pend','EN PROCESO':'b-proc','COMPLETADO':'b-done' }[t.estado] || 'b-pend';
+    return `
+    <div class="ticket-card ${cardClass}">
+      <div class="tk-top">
+        <span class="tk-num">${t.numero}</span>
+        <span class="badge ${badgeClass}">${t.estado}</span>
+      </div>
+      <div class="tk-product">${t.codigo}</div>
+      ${t.descripcion ? `<div style="font-size:11px;color:var(--text3);margin-bottom:8px">${t.descripcion}</div>` : ''}
+      <div class="tk-meta">
+        <span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg>
+          Orden: <strong style="color:var(--accent2)">${t.orden}</strong>
+        </span>
+        <span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>
+          ${t.operario || '—'}
+        </span>
+        <span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="12" height="11" rx="1"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="11" y1="1" x2="11" y2="5"/></svg>
+          Límite: ${t.fechaLim || '—'}
+        </span>
+      </div>
+      <div class="tk-footer">
+        <span class="urgency" style="color:${urgencia.color}">${t.estado !== 'COMPLETADO' ? urgencia.texto : '✓ Completado'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function calcUrgencia(fechaStr) {
+  if (!fechaStr) return { dias: 99, texto: '—', color: 'var(--text3)' };
+  const parts = fechaStr.split('/');
+  if (parts.length < 3) return { dias: 99, texto: fechaStr, color: 'var(--text3)' };
+  const fecha = new Date(parts[2], parts[1]-1, parts[0]);
+  const hoy   = new Date(); hoy.setHours(0,0,0,0);
+  const dias  = Math.ceil((fecha - hoy) / 86400000);
+  if (dias < 0)  return { dias, texto: `Vencido hace ${Math.abs(dias)}d`, color: 'var(--red)' };
+  if (dias === 0) return { dias, texto: 'Vence hoy', color: 'var(--red)' };
+  if (dias === 1) return { dias, texto: 'Vence mañana', color: 'var(--yellow)' };
+  return { dias, texto: `Vence en ${dias} días`, color: 'var(--text2)' };
+}
+
+// ─── MODAL ────────────────────────────────────────────────
+function abrirModal() {
+  document.getElementById('modalBg').classList.add('open');
+}
+function cerrarModal(e) {
+  if (!e || e.target === document.getElementById('modalBg')) {
+    document.getElementById('modalBg').classList.remove('open');
+  }
+}
+
+async function guardarTicket() {
+  const codigo   = document.getElementById('tk_codigo').value.trim();
+  const orden    = document.getElementById('tk_orden').value;
+  const operario = document.getElementById('tk_operario').value;
+  const fecha    = document.getElementById('tk_fecha').value;
+
+  if (!codigo)   { showToast('Ingresa el código de producto', 'error'); return; }
+  if (!orden)    { showToast('Selecciona la orden vinculada', 'error'); return; }
+  if (!operario) { showToast('Selecciona el operario', 'error'); return; }
+  if (!fecha)    { showToast('Ingresa la fecha límite', 'error'); return; }
+
+  const btn = document.getElementById('btnGuardarTk');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Guardando...';
+  showToast('Guardando ticket...', 'loading');
+
+  // Generar número de ticket
+  const num = 'TKT-' + Date.now().toString().slice(-4);
+  const fechaFmt = new Date(fecha + 'T00:00:00').toLocaleDateString('es-PE', {day:'2-digit',month:'2-digit',year:'numeric'});
+
+  const payload = {
+    accion: 'nuevoTicket',
+    ticket: { numero: num, codigo, descripcion: '', orden, operario, fechaLim: fechaFmt, estado: 'PENDIENTE' }
+  };
+
+  try {
+    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    showToast(`✓ Ticket ${num} creado para ${operario}`, 'success');
+    cerrarModal();
+    document.getElementById('tk_codigo').value = '';
+    document.getElementById('tk_orden').value = '';
+    document.getElementById('tk_operario').value = '';
+    setTimeout(() => cargarDatos(), 1000);
+  } catch(e) {
+    showToast('Error al guardar', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Crear ticket';
+  }
+}
+
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(toastTimer);
+  if (type !== 'loading') toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
