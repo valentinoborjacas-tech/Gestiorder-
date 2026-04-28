@@ -305,7 +305,7 @@ async function cargarDatos() {
       fetch(urlItems).then(r => r.text())
     ]);
 
-    ordenes = parseGviz(rOrd).filter(r => r[0] && r[6] !== 'ENTREGADO' && r[6] !== 'CANCELADO').map(r => ({
+    ordenes = parseGviz(rOrd).filter(r => r[0] && r[6] !== 'CANCELADO').map(r => ({
       numero: r[0]?.trim(), fechaOrden: r[1]?.trim(), cliente: r[2]?.trim(),
       destinatario: r[3]?.trim(), empresa: r[4]?.trim(), fechaEntrega: r[5]?.trim(),
       estado: r[6]?.trim() || 'PENDIENTE', origen: r[7]?.trim(), notas: r[9]?.trim(),
@@ -351,20 +351,48 @@ function parseGviz(raw) {
 function renderOrdenes() {
   const grid = document.getElementById('ordenesGrid');
   if (!ordenes.length) { grid.innerHTML = '<div class="empty"><span>No hay órdenes pendientes de despacho</span></div>'; return; }
-  grid.innerHTML = `<div class="ord-select-grid">${ordenes.map(o => {
+
+  const pendientes = ordenes.filter(o => o.estado === 'PENDIENTE');
+  const parciales  = ordenes.filter(o => o.estado === 'PARCIAL ENVIADO');
+  const completas  = ordenes.filter(o => o.estado === 'ENTREGADO');
+
+  function cardHtml(o, soloVer) {
     const items = itemsPorOrden[o.numero] || [];
     const pendItems = items.filter(i => i.cantidad > i.env1 + i.env2).length;
     const badgeClass = {PENDIENTE:'b-pend','PARCIAL ENVIADO':'b-part',ENTREGADO:'b-done'}[o.estado]||'b-pend';
-    return `<div class="ord-option" id="opt-${o.numero}" onclick="selectOrden('${o.numero}')">
+    const clickAction = soloVer ? '' : `onclick="selectOrden('${o.numero}')"`;
+    const opacity = soloVer ? 'opacity:.6;cursor:default' : 'cursor:pointer';
+    return `<div class="ord-option" id="opt-${o.numero}" ${clickAction} style="${opacity}">
       <div class="on">${o.numero}</div>
       <div class="oc">${o.cliente}${o.destinatario?` → ${o.destinatario}`:''}</div>
       <div class="om" style="display:flex;justify-content:space-between;margin-top:6px">
         <span>Entrega: ${o.fechaEntrega||'—'}</span>
         <span class="badge ${badgeClass}">${o.estado}</span>
       </div>
-      <div class="om" style="margin-top:4px;color:var(--yellow)">${pendItems} ítem${pendItems!==1?'s':''} pendiente${pendItems!==1?'s':''}</div>
+      <div class="om" style="margin-top:4px;color:${soloVer?'var(--green)':'var(--yellow)'}">
+        ${soloVer ? '✓ Orden completa' : `${pendItems} ítem${pendItems!==1?'s':''} pendiente${pendItems!==1?'s':''}`}
+      </div>
     </div>`;
-  }).join('')}</div>`;
+  }
+
+  let html = '';
+
+  if (parciales.length) {
+    html += `<div style="font-size:11px;color:var(--blue);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;margin-top:4px">Parciales — 2da entrega pendiente</div>`;
+    html += `<div class="ord-select-grid" style="margin-bottom:16px">${parciales.map(o => cardHtml(o, false)).join('')}</div>`;
+  }
+
+  if (pendientes.length) {
+    html += `<div style="font-size:11px;color:var(--yellow);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Pendientes — sin entrega</div>`;
+    html += `<div class="ord-select-grid" style="margin-bottom:16px">${pendientes.map(o => cardHtml(o, false)).join('')}</div>`;
+  }
+
+  if (completas.length) {
+    html += `<div style="font-size:11px;color:var(--green);font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Completadas — solo lectura</div>`;
+    html += `<div class="ord-select-grid">${completas.map(o => cardHtml(o, true)).join('')}</div>`;
+  }
+
+  grid.innerHTML = html;
 }
 
 function selectOrden(num) {
