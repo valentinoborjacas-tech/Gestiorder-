@@ -282,7 +282,7 @@ input::placeholder{color:var(--text3)}
 
 <script>
 const SHEET_ID   = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby583PyhVZAaTU2-IpxtIzBlejGkweMLpbWNzU6FMca0oAKEEXTMb-Tcimf7FDjpIb8GA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9NRV2FcnD2i3y1xrPx84eiCie23HZjVqoRN01fydfkjM_pgZmxRAqqN73m7aNkVCphw/exec';
 
 let ordenes = [];
 let itemsPorOrden = {};
@@ -567,96 +567,54 @@ function imprimirGuia() {
   const hoy         = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'});
 
   const win = window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>Guía ${guiaNum}</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}
-    .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}
-    .empresa{font-size:18px;font-weight:700}
-    .empresa-sub{font-size:11px;color:#555;margin-top:3px}
-    .guia-info{text-align:right}
-    .guia-num{font-size:20px;font-weight:700}
-    .guia-tipo{font-size:12px;background:#e8e4ff;color:#3a2fa0;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:4px}
-    .section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;padding:12px;background:#f7f7f7;border-radius:4px;border:1px solid #e0e0e0}
-    .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#333;grid-column:1/-1;margin-bottom:4px;padding-bottom:6px;border-bottom:1px solid #ddd}
-    .field{font-size:12px}
-    .field .lbl{color:#666;font-size:10px;text-transform:uppercase;letter-spacing:.3px}
-    .field .val{font-weight:600;margin-top:2px;font-size:13px}
-    .field .val.highlight{color:#2c1fa0;font-size:14px}
-    table{width:100%;border-collapse:collapse;margin-bottom:16px}
-    th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:11px;letter-spacing:.3px}
-    th.r{text-align:right}
-    td{padding:8px 10px;border-bottom:1px solid #ddd;font-size:12px}
-    td.r{text-align:right;font-family:monospace}
-    tr:nth-child(even) td{background:#f9f9f9}
-    .total-row td{background:#111;color:#fff;font-weight:700;font-size:13px}
-    .total-row td.r{font-size:15px}
-    .footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:30px;padding-top:16px;border-top:1px solid #ccc}
-    .firma-box{text-align:center}
-    .firma-prefill{font-size:13px;font-weight:600;margin-bottom:6px;min-height:20px}
-    .firma-line{border-top:1px solid #333;margin-top:36px;padding-top:6px;font-size:11px;color:#555}
-    @media print{body{padding:10px}}
-  </style></head><body>
-<script src="auth.js"></script>
-  <div class="header">
-    <div>
-      <div class="empresa">${o.empresa}</div>
-      <div class="empresa-sub">Guía de Remisión — Documento interno</div>
-    </div>
-    <div class="guia-info">
-      <div class="guia-num">${guiaNum}</div>
-      <div style="font-size:11px;color:#555;margin-top:4px">Emitida: ${hoy}</div>
-      <div class="guia-tipo">${nroEnt}</div>
-    </div>
-  </div>
-
-  <!-- DATOS DEL CLIENTE -->
-  <div class="section">
-    <div class="section-title">Datos del destinatario</div>
-    <div class="field"><div class="lbl">Cliente</div><div class="val highlight">${o.cliente}</div></div>
-    ${o.destinatario?`<div class="field"><div class="lbl">Sede / Destinatario</div><div class="val highlight">${o.destinatario}</div></div>`:'<div></div>'}
-    <div class="field"><div class="lbl">Empresa facturante</div><div class="val">${o.empresa}</div></div>
-    <div class="field"><div class="lbl">N° Orden</div><div class="val highlight">${o.numero}</div></div>
-    <div class="field"><div class="lbl">Fecha de entrega comprometida</div><div class="val">${o.fechaEntrega||'—'}</div></div>
-    <div class="field"><div class="lbl">Fecha de despacho</div><div class="val">${fechaFmt}</div></div>
-  </div>
-
-  <!-- DATOS DEL TRANSPORTE -->
-  <div class="section">
-    <div class="section-title">Datos del transporte</div>
-    <div class="field"><div class="lbl">Transportista</div><div class="val">${transp}</div></div>
-    <div class="field"><div class="lbl">Placa de la unidad</div><div class="val">${placa}</div></div>
-    <div class="field"><div class="lbl">Despachado por</div><div class="val">${despachador||'___________________'}</div></div>
-    ${obs?`<div class="field" style="grid-column:1/-1"><div class="lbl">Observaciones</div><div class="val">${obs}</div></div>`:''}
-  </div>
-
-  <!-- ÍTEMS -->
-  <table>
-    <thead><tr><th>#</th><th>Código</th><th>Descripción</th><th class="r">Cant. pedida</th><th class="r">A despachar</th></tr></thead>
-    <tbody>
-      ${items.map((item,i) => `<tr><td>${i+1}</td><td style="font-family:monospace;font-size:11px">${item.codigo}</td><td>${item.descripcion||'—'}</td><td class="r">${item.cantidad.toLocaleString()}</td><td class="r"><strong>${item.aCDespachar.toLocaleString()}</strong></td></tr>`).join('')}
-    </tbody>
-    <tfoot><tr class="total-row"><td colspan="4" style="text-align:right">TOTAL UNIDADES A DESPACHAR:</td><td class="r">${totalU.toLocaleString()}</td></tr></tfoot>
-  </table>
-
-  <!-- FIRMAS -->
-  <div class="footer">
-    <div class="firma-box">
-      <div class="firma-prefill">${despachador||''}</div>
-      <div class="firma-line">Despachado por</div>
-    </div>
-    <div class="firma-box">
-      <div class="firma-prefill"></div>
-      <div class="firma-line">Verificado por</div>
-    </div>
-    <div class="firma-box">
-      <div class="firma-prefill"></div>
-      <div class="firma-line">Recibido por (cliente)</div>
-    </div>
-  </div>
-  <script>window.onload=()=>window.print()<\/script>
-  </body></html>`);
+  const p = [];
+  p.push('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  p.push('<title>Guia ' + guiaNum + '</title>');
+  p.push('<style>');
+  p.push('*{box-sizing:border-box;margin:0;padding:0}');
+  p.push('body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}');
+  p.push('.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:14px}');
+  p.push('.empresa{font-size:18px;font-weight:700}.empresa-sub{font-size:11px;color:#555;margin-top:3px}');
+  p.push('.guia-num{font-size:20px;font-weight:700}.guia-tipo{font-size:12px;background:#e8e4ff;color:#3a2fa0;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:4px}');
+  p.push('.section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;padding:12px;background:#f7f7f7;border-radius:4px;border:1px solid #e0e0e0}');
+  p.push('.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#333;grid-column:1/-1;margin-bottom:4px;padding-bottom:6px;border-bottom:1px solid #ddd}');
+  p.push('.field .lbl{color:#666;font-size:10px;text-transform:uppercase;letter-spacing:.3px}.field .val{font-weight:600;margin-top:2px;font-size:13px}.field .val.highlight{color:#2c1fa0;font-size:14px}');
+  p.push('table{width:100%;border-collapse:collapse;margin-bottom:16px}');
+  p.push('th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:11px}th.r{text-align:right}');
+  p.push('td{padding:8px 10px;border-bottom:1px solid #ddd;font-size:12px}td.r{text-align:right;font-family:monospace}');
+  p.push('tr:nth-child(even) td{background:#f9f9f9}.total-row td{background:#111;color:#fff;font-weight:700;font-size:13px}.total-row td.r{font-size:15px}');
+  p.push('.footer{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:30px;padding-top:16px;border-top:1px solid #ccc}');
+  p.push('.firma-box{text-align:center}.firma-prefill{font-size:13px;font-weight:600;margin-bottom:6px;min-height:20px}.firma-line{border-top:1px solid #333;margin-top:36px;padding-top:6px;font-size:11px;color:#555}');
+  p.push('@media print{body{padding:10px}}');
+  p.push('</style></head><body>');
+  p.push('<div class="header"><div><div class="empresa">' + o.empresa + '</div><div class="empresa-sub">Guia de Remision — Documento interno</div></div>');
+  p.push('<div style="text-align:right"><div class="guia-num">' + guiaNum + '</div><div style="font-size:11px;color:#555;margin-top:4px">Emitida: ' + hoy + '</div><div class="guia-tipo">' + nroEnt + '</div></div></div>');
+  p.push('<div class="section"><div class="section-title">Datos del destinatario</div>');
+  p.push('<div class="field"><div class="lbl">Cliente</div><div class="val highlight">' + o.cliente + '</div></div>');
+  p.push(o.destinatario ? '<div class="field"><div class="lbl">Sede / Destinatario</div><div class="val highlight">' + o.destinatario + '</div></div>' : '<div></div>');
+  p.push('<div class="field"><div class="lbl">Empresa</div><div class="val">' + o.empresa + '</div></div>');
+  p.push('<div class="field"><div class="lbl">N Orden</div><div class="val highlight">' + o.numero + '</div></div>');
+  p.push('<div class="field"><div class="lbl">Entrega comprometida</div><div class="val">' + (o.fechaEntrega||'—') + '</div></div>');
+  p.push('<div class="field"><div class="lbl">Fecha despacho</div><div class="val">' + fechaFmt + '</div></div></div>');
+  p.push('<div class="section"><div class="section-title">Datos del transporte</div>');
+  p.push('<div class="field"><div class="lbl">Transportista</div><div class="val">' + transp + '</div></div>');
+  p.push('<div class="field"><div class="lbl">Placa</div><div class="val">' + placa + '</div></div>');
+  p.push('<div class="field"><div class="lbl">Despachado por</div><div class="val">' + (despachador||'___________________') + '</div></div>');
+  p.push(obs ? '<div class="field" style="grid-column:1/-1"><div class="lbl">Observaciones</div><div class="val">' + obs + '</div></div>' : '');
+  p.push('</div>');
+  p.push('<table><thead><tr><th>#</th><th>Codigo</th><th>Descripcion</th><th class="r">Cant. pedida</th><th class="r">A despachar</th></tr></thead><tbody>');
+  items.forEach(function(item, i) {
+    p.push('<tr><td>' + (i+1) + '</td><td style="font-family:monospace;font-size:11px">' + item.codigo + '</td><td>' + (item.descripcion||'—') + '</td><td class="r">' + item.cantidad.toLocaleString() + '</td><td class="r"><strong>' + item.aCDespachar.toLocaleString() + '</strong></td></tr>');
+  });
+  p.push('</tbody><tfoot><tr class="total-row"><td colspan="4" style="text-align:right">TOTAL UNIDADES A DESPACHAR:</td><td class="r">' + totalU.toLocaleString() + '</td></tr></tfoot></table>');
+  p.push('<div class="footer">');
+  p.push('<div class="firma-box"><div class="firma-prefill">' + (despachador||'') + '</div><div class="firma-line">Despachado por</div></div>');
+  p.push('<div class="firma-box"><div class="firma-prefill"></div><div class="firma-line">Verificado por</div></div>');
+  p.push('<div class="firma-box"><div class="firma-prefill"></div><div class="firma-line">Recibido por (cliente)</div></div>');
+  p.push('</div>');
+  p.push('<script>window.onload=function(){window.print()}<\/script>');
+  p.push('</body></html>');
+  win.document.write(p.join(''));
   win.document.close();
 }
 
@@ -667,50 +625,43 @@ function imprimirOrdenCompleta() {
   const totalU = items.reduce((s,i) => s + i.cantidad, 0);
 
   const win = window.open('','_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>Orden ${o.numero}</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}
-    .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:16px}
-    .empresa{font-size:18px;font-weight:700}
-    .ord-num{font-size:20px;font-weight:700}
-    .section{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}
-    .field .lbl{color:#666;font-size:10px;text-transform:uppercase}
-    .field .val{font-weight:600;margin-top:2px}
-    table{width:100%;border-collapse:collapse;margin-bottom:16px}
-    th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:11px}
-    th.r{text-align:right}
-    td{padding:8px 10px;border-bottom:1px solid #ddd;font-size:12px}
-    td.r{text-align:right;font-family:monospace}
-    tr:nth-child(even) td{background:#f9f9f9}
-    .total-row td{background:#111;color:#fff;font-weight:700}
-    @media print{body{padding:10px}}
-  </style></head><body>
-<script src="auth.js"></script>
-  <div class="header">
-    <div><div class="empresa">${o.empresa}</div><div style="font-size:11px;color:#555;margin-top:3px">Orden de preparación — Documento interno</div></div>
-    <div style="text-align:right"><div class="ord-num">${o.numero}</div><div style="font-size:11px;color:#555;margin-top:4px">Impreso: ${hoy}</div></div>
-  </div>
-  <div class="section">
-    <div class="field"><div class="lbl">Cliente</div><div class="val">${o.cliente}${o.destinatario?' → '+o.destinatario:''}</div></div>
-    <div class="field"><div class="lbl">Empresa</div><div class="val">${o.empresa}</div></div>
-    <div class="field"><div class="lbl">Fecha orden</div><div class="val">${o.fechaOrden||'—'}</div></div>
-    <div class="field"><div class="lbl">Fecha entrega</div><div class="val">${o.fechaEntrega||'—'}</div></div>
-    ${o.notas?`<div class="field" style="grid-column:1/-1"><div class="lbl">Notas</div><div class="val">${o.notas}</div></div>`:''}
-  </div>
-  <table>
-    <thead><tr><th>#</th><th>Código</th><th>Descripción</th><th class="r">Cantidad pedida</th><th class="r">1ra entrega</th><th class="r">2da entrega</th><th class="r">Pendiente</th></tr></thead>
-    <tbody>
-      ${items.map((item,i) => {
-        const pend = item.cantidad - item.env1 - item.env2;
-        return `<tr><td>${i+1}</td><td style="font-family:monospace">${item.codigo}</td><td>${item.descripcion||'—'}</td><td class="r">${item.cantidad.toLocaleString()}</td><td class="r">${item.env1.toLocaleString()}</td><td class="r">${item.env2.toLocaleString()}</td><td class="r"><strong>${pend.toLocaleString()}</strong></td></tr>`;
-      }).join('')}
-    </tbody>
-    <tfoot><tr class="total-row"><td colspan="3" style="text-align:right">TOTAL:</td><td class="r">${totalU.toLocaleString()}</td><td class="r">${items.reduce((s,i)=>s+i.env1,0).toLocaleString()}</td><td class="r">${items.reduce((s,i)=>s+i.env2,0).toLocaleString()}</td><td class="r">${items.reduce((s,i)=>s+(i.cantidad-i.env1-i.env2),0).toLocaleString()}</td></tr></tfoot>
-  </table>
-  <script>window.onload=()=>window.print()<\/script>
-  </body></html>`);
+  const p = [];
+  p.push('<!DOCTYPE html><html><head><meta charset="UTF-8">');
+  p.push('<title>Orden ' + o.numero + '</title>');
+  p.push('<style>');
+  p.push('*{box-sizing:border-box;margin:0;padding:0}');
+  p.push('body{font-family:Arial,sans-serif;font-size:12px;color:#111;padding:20px}');
+  p.push('.header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:16px}');
+  p.push('.empresa{font-size:18px;font-weight:700}.ord-num{font-size:20px;font-weight:700}');
+  p.push('.section{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;padding:10px;background:#f7f7f7;border-radius:4px}');
+  p.push('.field .lbl{color:#666;font-size:10px;text-transform:uppercase}.field .val{font-weight:600;margin-top:2px}');
+  p.push('table{width:100%;border-collapse:collapse;margin-bottom:16px}');
+  p.push('th{background:#111;color:#fff;padding:8px 10px;text-align:left;font-size:11px}th.r{text-align:right}');
+  p.push('td{padding:8px 10px;border-bottom:1px solid #ddd;font-size:12px}td.r{text-align:right;font-family:monospace}');
+  p.push('tr:nth-child(even) td{background:#f9f9f9}.total-row td{background:#111;color:#fff;font-weight:700}');
+  p.push('@media print{body{padding:10px}}');
+  p.push('</style></head><body>');
+  p.push('<div class="header"><div><div class="empresa">' + o.empresa + '</div><div style="font-size:11px;color:#555;margin-top:3px">Orden de preparacion — Documento interno</div></div>');
+  p.push('<div style="text-align:right"><div class="ord-num">' + o.numero + '</div><div style="font-size:11px;color:#555;margin-top:4px">Impreso: ' + hoy + '</div></div></div>');
+  p.push('<div class="section">');
+  p.push('<div class="field"><div class="lbl">Cliente</div><div class="val">' + o.cliente + (o.destinatario?' → '+o.destinatario:'') + '</div></div>');
+  p.push('<div class="field"><div class="lbl">Empresa</div><div class="val">' + o.empresa + '</div></div>');
+  p.push('<div class="field"><div class="lbl">Fecha orden</div><div class="val">' + (o.fechaOrden||'—') + '</div></div>');
+  p.push('<div class="field"><div class="lbl">Fecha entrega</div><div class="val">' + (o.fechaEntrega||'—') + '</div></div>');
+  p.push(o.notas ? '<div class="field" style="grid-column:1/-1"><div class="lbl">Notas</div><div class="val">' + o.notas + '</div></div>' : '');
+  p.push('</div>');
+  p.push('<table><thead><tr><th>#</th><th>Codigo</th><th>Descripcion</th><th class="r">Cantidad pedida</th><th class="r">1ra entrega</th><th class="r">2da entrega</th><th class="r">Pendiente</th></tr></thead><tbody>');
+  items.forEach(function(item, i) {
+    const pend = item.cantidad - item.env1 - item.env2;
+    p.push('<tr><td>' + (i+1) + '</td><td style="font-family:monospace">' + item.codigo + '</td><td>' + (item.descripcion||'—') + '</td><td class="r">' + item.cantidad.toLocaleString() + '</td><td class="r">' + item.env1.toLocaleString() + '</td><td class="r">' + item.env2.toLocaleString() + '</td><td class="r"><strong>' + pend.toLocaleString() + '</strong></td></tr>');
+  });
+  const totEnv1 = items.reduce((s,i)=>s+i.env1,0);
+  const totEnv2 = items.reduce((s,i)=>s+i.env2,0);
+  const totPend = items.reduce((s,i)=>s+(i.cantidad-i.env1-i.env2),0);
+  p.push('</tbody><tfoot><tr class="total-row"><td colspan="3" style="text-align:right">TOTAL:</td><td class="r">' + totalU.toLocaleString() + '</td><td class="r">' + totEnv1.toLocaleString() + '</td><td class="r">' + totEnv2.toLocaleString() + '</td><td class="r">' + totPend.toLocaleString() + '</td></tr></tfoot></table>');
+  p.push('<script>window.onload=function(){window.print()}<\/script>');
+  p.push('</body></html>');
+  win.document.write(p.join(''));
   win.document.close();
 }
 
@@ -764,4 +715,5 @@ function showToast(msg, type='success') {
 </script>
 </body>
 </html>
+
 
