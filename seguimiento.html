@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -176,6 +177,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
     <a class="nav-item active" href="seguimiento.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><polyline points="8,5 8,8 10,10"/></svg>Seguimiento</a>
     <a class="nav-item" href="tickets.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12v8H2z"/><path d="M10 4v8"/></svg>Tickets Fab.</a>
     <a class="nav-item" href="despacho.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="6" width="10" height="8" rx="1"/><path d="M11 9h2l2 3v2h-4"/><circle cx="4" cy="14" r="1.5"/><circle cx="13" cy="14" r="1.5"/></svg>Despacho</a>
+    <div class="nav-section">Producción</div>
+    <a class="nav-item" href="operario.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>Operario</a>
     <div class="nav-section">Consultas</div>
     <a class="nav-item" href="stock.html"><svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Stock</a>
   </div>
@@ -221,6 +224,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 
 <script>
 const SHEET_ID = '1lc-HSFfaUKF0c7qVQVoqshhzcnlEsjzX9HTPo4EFSNs';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby9NRV2FcnD2i3y1xrPx84eiCie23HZjVqoRN01fydfkjM_pgZmxRAqqN73m7aNkVCphw/exec';
 
 let ordenes = [];
 let itemsPorOrden = {};
@@ -411,8 +415,12 @@ function seleccionarOrden(num) {
           <span class="badge ${stClass(o.estado)}" style="font-size:11px;padding:4px 10px">${stLabel(o.estado)}</span>
           <button onclick="imprimirSeguimiento('${o.numero}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:12px;font-family:var(--font);cursor:pointer">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="1" width="10" height="14" rx="1"/><line x1="5" y1="5" x2="11" y2="5"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="5" y1="11" x2="9" y2="11"/></svg>
-            PDF seguimiento
+            PDF
           </button>
+          ${o.estado !== 'CANCELADO' ? `<button onclick="pedirAnularOrden('${o.numero}')" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--red);background:var(--red-dim);color:var(--red);font-size:12px;font-family:var(--font);cursor:pointer">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg>
+            Anular orden
+          </button>` : ''}
         </div>
       </div>
       <div class="dh-stats">
@@ -546,6 +554,34 @@ function stClass(st) {
 }
 function itemStClass(st) {
   return { 'PENDIENTE':'b-pend','PARCIAL':'b-part','COMPLETADO':'b-done','SIN STOCK':'b-tick' }[st] || 'b-pend';
+}
+
+function pedirAnularOrden(num) {
+  const o = ordenes.find(x => x.numero === num);
+  if (!o) return;
+  // Double confirmation
+  const conf1 = confirm(`¿Seguro que quieres anular la orden ${num} de ${o.cliente}?\n\nEsta acción marcará la orden como CANCELADO.`);
+  if (!conf1) return;
+  const conf2 = confirm(`Confirmación final: ¿Anular definitivamente la orden ${num}?`);
+  if (!conf2) return;
+  anularOrden(num);
+}
+
+async function anularOrden(num) {
+  showToast('Anulando orden...', 'loading');
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ accion: 'actualizarEstadoOrden', numero: num, estado: 'CANCELADO' })
+    });
+    showToast(`✓ Orden ${num} anulada`, 'success');
+    // Update local state
+    const o = ordenes.find(x => x.numero === num);
+    if (o) o.estado = 'CANCELADO';
+    setTimeout(() => { filtrar(); seleccionarOrden(num); }, 800);
+  } catch(e) {
+    showToast('Error al anular', 'error');
+  }
 }
 
 function imprimirSeguimiento(num) {
