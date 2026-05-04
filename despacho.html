@@ -601,11 +601,13 @@ async function generarGuia() {
   };
 
   try {
-    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const res  = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Error desconocido');
     showToast('✓ Entrega confirmada y registrada', 'success');
     setTimeout(() => { ordenSeleccionada = null; irPaso1(); cargarDatos(); }, 1200);
   } catch(e) {
-    showToast('Error al guardar', 'error');
+    showToast('Error al guardar: ' + e.message, 'error');
   }
 }
 
