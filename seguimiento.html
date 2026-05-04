@@ -498,16 +498,16 @@ function buildTimeline(o, items, env1, env2, sinStock) {
     chip: has1 ? 'info' : '', chipTxt: has1 ? 'Parcial enviado' : ''
   });
 
-  // 4. Segunda entrega
+  // 4. Segunda entrega — solo mostrar si ya se hizo 1ra entrega y queda pendiente, o si ya hay 2da
   const has2 = env2 > 0;
-  const need2 = items.some(i => i.cantidad > i.env1);
+  const need2 = has1 && items.some(i => i.cantidad > (i.env1 + i.env2));
   if (has2 || need2) {
     stages.push({
       dot: has2 ? 'dot-done' : 'dot-pend',
       title: '2da entrega / despacho',
       desc: has2 ? `${env2.toLocaleString()} unidades despachadas` : 'Pendiente — esperando stock o fabricación',
       time: has2 ? '—' : 'Pendiente',
-      chip: has2 ? 'ok' : '', chipTxt: 'Completado'
+      chip: has2 ? 'info' : '', chipTxt: has2 ? 'Parcial enviado' : ''
     });
   }
 
