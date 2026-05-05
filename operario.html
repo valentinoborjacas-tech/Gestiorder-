@@ -169,19 +169,27 @@ async function cargarTickets() {
   showToast('Actualizando...', 'loading');
 
   try {
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=TICKETS_FAB&range=A4:G500`;
-    const raw = await fetch(url).then(r => r.text());
+    const urlTk  = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=TICKETS_FAB&range=A4:H500`;
+    const urlOrd = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=ORDENES&range=A3:C500`;
+    const [raw, rawOrd] = await Promise.all([
+      fetch(urlTk).then(r => r.text()),
+      fetch(urlOrd).then(r => r.text()),
+    ]);
+    const ordenesMap = {};
+    parseGviz(rawOrd).filter(r => r[0]).forEach(r => { ordenesMap[r[0]?.trim()] = r[2]?.trim(); });
     const todos = parseGviz(raw).filter(r => r[0]);
 
     tickets = todos
       .map(r => ({
-        numero:    r[0]?.trim(),
-        codigo:    r[1]?.trim(),
+        numero:      r[0]?.trim(),
+        codigo:      r[1]?.trim(),
         descripcion: r[2]?.trim(),
-        orden:     r[3]?.trim(),
-        operario:  r[4]?.trim(),
-        fechaLim:  r[5]?.trim(),
-        estado:    r[6]?.trim() || 'PENDIENTE',
+        orden:       r[3]?.trim(),
+        operario:    r[4]?.trim(),
+        fechaLim:    r[5]?.trim(),
+        estado:      r[6]?.trim() || 'PENDIENTE',
+        cantidad:    r[7]?.trim() || '',
+        cliente:     ordenesMap[r[3]?.trim()] || '—',
       }))
       .filter(t => t.operario === operarioActual && t.estado !== 'COMPLETADO');
 
@@ -271,6 +279,14 @@ function ticketHtml(t) {
         <div class="mval" style="color:var(--accent2)">${t.orden}</div>
       </div>
       <div class="tc-meta-item">
+        <div class="mlabel">Cliente</div>
+        <div class="mval">${t.cliente}</div>
+      </div>
+      <div class="tc-meta-item">
+        <div class="mlabel">Cantidad</div>
+        <div class="mval" style="color:var(--accent)">${t.cantidad ? parseFloat(t.cantidad).toLocaleString() + ' und' : '—'}</div>
+      </div>
+      <div class="tc-meta-item">
         <div class="mlabel">Fecha límite</div>
         <div class="mval">${t.fechaLim || '—'}</div>
       </div>
@@ -321,12 +337,14 @@ async function confirmarAccion() {
   showToast('Actualizando...', 'loading');
 
   try {
-    await fetch(SCRIPT_URL, {
+    const res  = await fetch(SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify({ accion: 'actualizarTicket', numero: num, estado: nuevoEstado })
     });
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error || 'Error al actualizar');
     cerrarModal();
-    showToast(nuevoEstado === 'COMPLETADO' ? '✓ Completado' : '▶ En proceso', 'success');
+    showToast(nuevoEstado === 'COMPLETADO' ? '✓ Marcado como completado' : '▶ Fabricación iniciada', 'success');
     setTimeout(() => cargarTickets(), 800);
   } catch(e) {
     showToast('Error al actualizar', 'error');
