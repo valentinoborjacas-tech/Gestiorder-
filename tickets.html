@@ -189,18 +189,25 @@ input::placeholder { color: var(--text3); }
 <div class="modal-bg" id="modalBg" onclick="cerrarModal(event)">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-title">Nuevo ticket de fabricación</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:14px;background:var(--surface2);border-radius:var(--radius-sm);padding:8px 10px">
+      Completa al menos uno: <strong>Código de producto</strong> o <strong>Material a trabajar</strong>
+    </div>
     <div class="form-group">
-      <label>Código de producto *</label>
-      <input type="text" id="tk_codigo" placeholder="Ej: SA-ROJ-140-33">
+      <label>Código de producto <span style="color:var(--text3);font-size:11px">(o ingresa el material abajo)</span></label>
+      <input type="text" id="tk_codigo" placeholder="Ej: SA-ROJ-140-33" oninput="actualizarObligatorios()">
+    </div>
+    <div class="form-group">
+      <label>Material que se desea trabajar <span style="color:var(--text3);font-size:11px">(opcional si hay código)</span></label>
+      <input type="text" id="tk_material" placeholder="Ej: Polietileno baja densidad natural, 1kg" oninput="actualizarObligatorios()">
     </div>
     <div class="form-group">
       <label>Cantidad requerida *</label>
       <input type="number" id="tk_cantidad" placeholder="Ej: 500" min="1">
     </div>
     <div class="form-group">
-      <label>N° Orden vinculada *</label>
+      <label>N° Orden vinculada</label>
       <select id="tk_orden">
-        <option value="">Seleccionar orden...</option>
+        <option value="NINGUNO">Ninguno — solo para stock</option>
       </select>
     </div>
     <div class="form-group">
@@ -296,11 +303,23 @@ function parseGviz(raw) {
 
 function poblarOrdenes() {
   const sel = document.getElementById('tk_orden');
+  // Limpiar preservando la opción "Ninguno"
+  sel.innerHTML = '<option value="NINGUNO">Ninguno — solo para stock</option>';
   ordenes.forEach(o => {
     const opt = document.createElement('option');
     opt.value = o.numero;
     opt.textContent = `${o.numero} — ${o.cliente}`;
     sel.appendChild(opt);
+  });
+}
+
+function actualizarObligatorios() {
+  const codigo   = document.getElementById('tk_codigo').value.trim();
+  const material = document.getElementById('tk_material').value.trim();
+  // Visual feedback: si ninguno tiene valor, destacar ambos
+  const ninguno = !codigo && !material;
+  ['tk_codigo','tk_material'].forEach(id => {
+    document.getElementById(id).style.borderColor = ninguno ? 'var(--red)' : '';
   });
 }
 
@@ -348,8 +367,8 @@ function renderTickets(list) {
         <span class="tk-num">${t.numero}</span>
         <span class="badge ${badgeClass}">${t.estado}</span>
       </div>
-      <div class="tk-product">${t.codigo}</div>
-      ${t.descripcion ? `<div style="font-size:11px;color:var(--text3);margin-bottom:8px">${t.descripcion}</div>` : ''}
+      <div class="tk-product">${t.codigo && t.codigo !== '—' ? t.codigo : '<span style="color:var(--text3);font-style:italic;font-size:13px">Sin código</span>'}</div>
+      ${t.descripcion ? `<div style="font-size:11px;color:var(--text2);margin:-4px 0 6px;"><span style="color:var(--text3)">Material:</span> ${t.descripcion}</div>` : ''}
       <div class="tk-meta">
         <span>
           <svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg>
@@ -405,14 +424,19 @@ function cerrarModal(e) {
 
 async function guardarTicket() {
   const codigo   = document.getElementById('tk_codigo').value.trim();
+  const material = document.getElementById('tk_material').value.trim();
   const cantidad = document.getElementById('tk_cantidad').value.trim();
   const orden    = document.getElementById('tk_orden').value;
   const operario = document.getElementById('tk_operario').value;
   const fecha    = document.getElementById('tk_fecha').value;
 
-  if (!codigo)   { showToast('Ingresa el código de producto', 'error'); return; }
-  if (!cantidad) { showToast('Ingresa la cantidad requerida', 'error'); return; }
-  if (!orden)    { showToast('Selecciona la orden vinculada', 'error'); return; }
+  // Al menos código o material
+  if (!codigo && !material) {
+    actualizarObligatorios();
+    showToast('Ingresa el código de producto o el material a trabajar', 'error');
+    return;
+  }
+  if (!cantidad || parseFloat(cantidad) <= 0) { showToast('Ingresa la cantidad requerida', 'error'); return; }
   if (!operario) { showToast('Selecciona el operario', 'error'); return; }
   if (!fecha)    { showToast('Ingresa la fecha límite', 'error'); return; }
 
@@ -426,7 +450,16 @@ async function guardarTicket() {
 
   const payload = {
     accion: 'nuevoTicket',
-    ticket: { numero: num, codigo, cantidad, descripcion: '', orden, operario, fechaLim: fechaFmt, estado: 'PENDIENTE' }
+    ticket: {
+      numero: num,
+      codigo:      codigo || '—',
+      descripcion: material || '',
+      orden:       orden === 'NINGUNO' ? '' : orden,
+      operario,
+      fechaLim: fechaFmt,
+      estado: 'PENDIENTE',
+      cantidad
+    }
   };
 
   try {
@@ -435,13 +468,14 @@ async function guardarTicket() {
     if (!json.ok) throw new Error(json.error || 'Error al guardar');
     showToast(`✓ Ticket ${num} creado para ${operario}`, 'success');
     cerrarModal();
-    document.getElementById('tk_codigo').value = '';
+    document.getElementById('tk_codigo').value   = '';
+    document.getElementById('tk_material').value = '';
     document.getElementById('tk_cantidad').value = '';
-    document.getElementById('tk_orden').value = '';
+    document.getElementById('tk_orden').value    = 'NINGUNO';
     document.getElementById('tk_operario').value = '';
     setTimeout(() => cargarDatos(), 1000);
   } catch(e) {
-    showToast('Error al guardar', 'error');
+    showToast('Error: ' + e.message, 'error');
   } finally {
     btn.disabled = false;
     btn.innerHTML = 'Crear ticket';
