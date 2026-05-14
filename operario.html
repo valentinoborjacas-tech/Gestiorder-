@@ -102,6 +102,25 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); font
 </style>
 </head>
 <body>
+<script>
+// Guard de sesión — verificar antes de cargar la página
+(function() {
+  const session = sessionStorage.getItem('go_user');
+  if (!session) { window.location.href = 'login.html'; return; }
+  try {
+    const user = JSON.parse(session);
+    if (!user || !user.rol) throw new Error('Sesión inválida');
+    // Solo operarios y admins pueden ver esta página
+    if (user.rol !== 'operario' && user.rol !== 'admin') {
+      sessionStorage.removeItem('go_user');
+      window.location.href = 'login.html';
+    }
+  } catch(e) {
+    sessionStorage.removeItem('go_user');
+    window.location.href = 'login.html';
+  }
+})();
+</script>
 
 <div class="header">
   <div class="header-left">
