@@ -735,10 +735,12 @@ function pedirCerrarOrden() {
 async function cerrarOrden() {
   showToast('Cerrando orden...', 'loading');
   try {
-    await fetch(SCRIPT_URL, {
+    const resCerrar  = await fetch(SCRIPT_URL, {
       method: 'POST',
       body: JSON.stringify({ accion: 'actualizarEstadoOrden', numero: ordenSeleccionada.numero, estado: 'CANCELADO' })
     });
+    const jsonCerrar = await resCerrar.json();
+    if (!jsonCerrar.ok) throw new Error(jsonCerrar.error || 'Error al cerrar');
     showToast(`✓ Orden ${ordenSeleccionada.numero} cerrada`, 'success');
     setTimeout(() => { ordenSeleccionada = null; irPaso1(); cargarDatos(); }, 1000);
   } catch(e) {
