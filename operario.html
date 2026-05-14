@@ -193,6 +193,12 @@ async function cargarTickets() {
       }))
       .filter(t => t.operario === operarioActual && t.estado !== 'COMPLETADO');
 
+    // Ordenar: EN PROCESO primero, luego PAUSADO, luego PENDIENTE
+    tickets.sort((a, b) => {
+      const orden = { 'EN PROCESO': 0, 'PAUSADO': 1, 'PENDIENTE': 2 };
+      return (orden[a.estado] ?? 3) - (orden[b.estado] ?? 3);
+    });
+
     renderTickets();
     showToast(tickets.length > 0 ? `${tickets.length} ticket${tickets.length>1?'s':''} pendiente${tickets.length>1?'s':''}` : 'Sin tickets pendientes', 'success');
   } catch(e) {
@@ -233,17 +239,21 @@ function renderTickets() {
     return;
   }
 
-  // Separar pendientes y en proceso
-  const pendientes = tickets.filter(t => t.estado === 'PENDIENTE');
   const enProceso  = tickets.filter(t => t.estado === 'EN PROCESO');
+  const pausados   = tickets.filter(t => t.estado === 'PAUSADO');
+  const pendientes = tickets.filter(t => t.estado === 'PENDIENTE');
 
   let html = '';
   if (enProceso.length) {
-    html += `<div class="section-title">En proceso (${enProceso.length})</div>`;
+    html += `<div class="section-title" style="color:var(--accent2)">▶ En proceso (${enProceso.length})</div>`;
     html += enProceso.map(t => ticketHtml(t)).join('');
   }
+  if (pausados.length) {
+    html += `<div class="section-title" style="margin-top:${enProceso.length?'20px':'0'};color:var(--yellow)">⏸ Pausados (${pausados.length})</div>`;
+    html += pausados.map(t => ticketHtml(t)).join('');
+  }
   if (pendientes.length) {
-    html += `<div class="section-title" style="margin-top:${enProceso.length?'20px':'0'}">Pendientes (${pendientes.length})</div>`;
+    html += `<div class="section-title" style="margin-top:${enProceso.length||pausados.length?'20px':'0'}">Pendientes (${pendientes.length})</div>`;
     html += pendientes.map(t => ticketHtml(t)).join('');
   }
 
@@ -252,18 +262,25 @@ function renderTickets() {
 
 function ticketHtml(t) {
   const urgencia = calcUrgencia(t.fechaLim);
-  const cardClass = t.estado === 'EN PROCESO' ? 'proc' : urgencia.dias <= 1 ? 'urgent' : 'normal';
+  const cardClass = t.estado === 'EN PROCESO' ? 'proc' : t.estado === 'PAUSADO' ? 'paused' : urgencia.dias <= 1 ? 'urgent' : 'normal';
   const urgClass  = urgencia.dias <= 1 ? 'urg-red' : urgencia.dias <= 3 ? 'urg-yellow' : 'urg-normal';
-  const badgeClass = t.estado === 'EN PROCESO' ? 'b-proc' : 'b-pend';
+  const badgeClass = t.estado === 'EN PROCESO' ? 'b-proc' : t.estado === 'PAUSADO' ? 'b-pause' : 'b-pend';
 
-  const btns = t.estado === 'EN PROCESO'
-    ? `<div class="action-btns">
-        <button class="action-btn btn-completado btn-completado-full" onclick="pedirConfirmacion('${t.numero}','completado')">✓ Marcar como completado</button>
-       </div>`
-    : `<div class="action-btns">
-        <button class="action-btn btn-proceso" onclick="pedirConfirmacion('${t.numero}','proceso')">▶ Iniciar</button>
-        <button class="action-btn btn-completado" onclick="pedirConfirmacion('${t.numero}','completado')">✓ Completado</button>
-       </div>`;
+  let btns;
+  if (t.estado === 'EN PROCESO') {
+    btns = `<div class="action-btns">
+      <button class="action-btn btn-pausa" onclick="pedirConfirmacion('${t.numero}','pausar')">⏸ Pausar</button>
+      <button class="action-btn btn-completado" onclick="pedirConfirmacion('${t.numero}','completado')">✓ Completado</button>
+    </div>`;
+  } else if (t.estado === 'PAUSADO') {
+    btns = `<div class="action-btns">
+      <button class="action-btn btn-proceso btn-completado-full" onclick="pedirConfirmacion('${t.numero}','proceso')">▶ Reanudar</button>
+    </div>`;
+  } else {
+    btns = `<div class="action-btns">
+      <button class="action-btn btn-proceso btn-completado-full" onclick="pedirConfirmacion('${t.numero}','proceso')">▶ Iniciar fabricación</button>
+    </div>`;
+  }
 
   return `
   <div class="ticket-card ${cardClass}" id="card-${t.numero}">
@@ -271,8 +288,8 @@ function ticketHtml(t) {
       <span class="tc-num">${t.numero}</span>
       <span class="badge ${badgeClass}">${t.estado}</span>
     </div>
-    <div class="tc-product">${t.codigo}</div>
-    ${t.descripcion ? `<div class="tc-desc">${t.descripcion}</div>` : ''}
+    <div class="tc-product">${t.codigo && t.codigo !== '—' ? t.codigo : '<span style="font-style:italic;font-size:14px;color:var(--text2)">Sin código</span>'}</div>
+    ${t.descripcion ? `<div class="tc-desc"><span style="opacity:.7">Material:</span> ${t.descripcion}</div>` : ''}
     <div class="tc-meta">
       <div class="tc-meta-item">
         <div class="mlabel">Orden</div>
@@ -314,10 +331,10 @@ function pedirConfirmacion(num, accion) {
   pendingAction = { num, accion };
   const t = tickets.find(t => t.numero === num);
   const modal = document.getElementById('modalBg');
-  document.getElementById('modalTitle').textContent = accion === 'completado' ? 'Marcar como completado' : 'Iniciar fabricación';
-  document.getElementById('modalSub').textContent = accion === 'completado'
-    ? `¿Confirmas que terminaste ${t?.codigo}?`
-    : `¿Inicias la fabricación de ${t?.codigo}?`;
+  const titulos = { completado: 'Marcar como completado', proceso: t?.estado === 'PAUSADO' ? 'Reanudar fabricación' : 'Iniciar fabricación', pausar: 'Pausar producción' };
+  const subs    = { completado: `¿Confirmás que terminaste ${t?.codigo || t?.descripcion}?`, proceso: t?.estado === 'PAUSADO' ? `¿Reanudás la fabricación de ${t?.codigo || t?.descripcion}?` : `¿Iniciás la fabricación de ${t?.codigo || t?.descripcion}?`, pausar: `¿Pausás ${t?.codigo || t?.descripcion}? Podrás reanudarla después.` };
+  document.getElementById('modalTitle').textContent = titulos[accion] || accion;
+  document.getElementById('modalSub').textContent   = subs[accion]   || '';
   modal.classList.add('open');
 }
 
@@ -329,7 +346,7 @@ function cerrarModal() {
 async function confirmarAccion() {
   if (!pendingAction) return;
   const { num, accion } = pendingAction;
-  const nuevoEstado = accion === 'completado' ? 'COMPLETADO' : 'EN PROCESO';
+  const nuevoEstado = accion === 'completado' ? 'COMPLETADO' : accion === 'pausar' ? 'PAUSADO' : 'EN PROCESO';
 
   const btn = document.getElementById('btnConfirm');
   btn.textContent = '...';
@@ -344,7 +361,8 @@ async function confirmarAccion() {
     const json = await res.json();
     if (!json.ok) throw new Error(json.error || 'Error al actualizar');
     cerrarModal();
-    showToast(nuevoEstado === 'COMPLETADO' ? '✓ Marcado como completado' : '▶ Fabricación iniciada', 'success');
+    const msgs = { 'COMPLETADO': '✓ Marcado como completado', 'EN PROCESO': '▶ Fabricación iniciada', 'PAUSADO': '⏸ Producción pausada' };
+    showToast(msgs[nuevoEstado] || 'Estado actualizado', 'success');
     setTimeout(() => cargarTickets(), 800);
   } catch(e) {
     showToast('Error al actualizar', 'error');
