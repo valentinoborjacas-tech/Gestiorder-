@@ -197,6 +197,7 @@ let activeSt = 'all';
 document.addEventListener('DOMContentLoaded', cargarDatos);
 
 async function cargarDatos() {
+  try {
   showToast('Actualizando stock...', 'loading');
   document.getElementById('tableBody').innerHTML = '<tr><td colspan="6"><div class="empty"><div class="spinner"></div><span>Cargando...</span></div></td></tr>';
   try {
@@ -220,6 +221,17 @@ async function cargarDatos() {
   } catch(e) {
     showToast('Error al cargar stock', 'error');
     document.getElementById('tableBody').innerHTML = '<tr><td colspan="6"><div class="empty" style="color:var(--red)">Error al conectar con el Sheet</div></td></tr>';
+  }
+
+  } catch(e) {
+    console.error('Error en cargarDatos:', e);
+    const container = document.getElementById('content') || document.querySelector('.content') || document.body;
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'margin:32px auto;max-width:480px;background:#fff;border:1px solid #D0D7E8;border-radius:10px;padding:28px;text-align:center';
+    errDiv.innerHTML = `<div style="font-size:32px;margin-bottom:12px">⚠️</div><div style="font-size:15px;font-weight:600;color:#1A1F36;margin-bottom:6px">No se pudo cargar la información</div><div style="font-size:13px;color:#8A92A8;margin-bottom:16px">Verifica tu conexión e intenta nuevamente</div><button onclick="cargarDatos()" style="background:#0036B3;color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit">🔄 Reintentar</button>`;
+    // limpiar spinners
+    document.querySelectorAll('.spinner').forEach(s => s.parentElement && (s.parentElement.innerHTML = ''));
+    if (container) container.prepend(errDiv);
   }
 }
 
