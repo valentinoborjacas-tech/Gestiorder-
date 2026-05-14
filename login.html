@@ -108,7 +108,7 @@ function handleCredentialResponse(response) {
 const session = sessionStorage.getItem('go_user');
 if (session) {
   const user = JSON.parse(session);
-  window.location.href = user.rol === 'operario' ? 'operario.html' : 'index.html';
+  window.location.href = user.rol === 'operario' ? 'operario.html' : 'dashboard.html';
 }
 </script>
 </body>
